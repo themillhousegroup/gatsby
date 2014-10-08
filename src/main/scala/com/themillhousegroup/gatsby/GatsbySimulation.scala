@@ -5,7 +5,7 @@ import com.dividezero.stubby.core.model.StubExchange
 import org.slf4j.LoggerFactory
 
 /**
- * A Gatling {@link Simulation} that automagically spins up
+ * A Gatling Simulation that automagically spins up
  * "the thing at the back" so that we can actually test
  * "the thing in the middle"
  *
