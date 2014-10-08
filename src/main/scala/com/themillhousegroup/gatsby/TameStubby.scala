@@ -16,7 +16,7 @@ class TameStubby(paths: String*) {
     http.get.start()
   }
 
-  def stop(port: Int, paths: List[String]) = {
+  def stop = {
     http.get.stop()
   }
 
