@@ -21,13 +21,19 @@ cd "${BIN_DIR}/.." && DEFAULT_GATLING_HOME=`pwd` && cd "${OLDDIR}"
 
 GATLING_HOME="${GATLING_HOME:=${DEFAULT_GATLING_HOME}}"
 GATLING_CONF="${GATLING_CONF:=$GATLING_HOME/conf}"
+GATLING_LIBS="${GATLING_LIBS:=$GATLING_HOME/target/universal/stage/lib}"
 
-export GATLING_HOME GATLING_CONF
+if [ ! -d "$GATLING_LIBS" ]; then
+    echo "Couldn't find any Gatling libs under target/universal/stage/lib - putting them there now"
+    sbt stage
+fi
+
+export GATLING_HOME GATLING_CONF GATLING_LIBS
 
 echo "GATLING_HOME is set to ${GATLING_HOME}"
 
 JAVA_OPTS="-server -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -Xms512M -Xmx512M -Xmn100M -XX:+HeapDumpOnOutOfMemoryError -XX:+AggressiveOpts -XX:+OptimizeStringConcat -XX:+UseFastAccessorMethods -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false ${JAVA_OPTS}"
 
-CLASSPATH="$GATLING_HOME/lib/*:$GATLING_CONF:$GATLING_HOME/user-files:${JAVA_CLASSPATH}"
+CLASSPATH="$GATLING_LIBS/*:$GATLING_CONF:$GATLING_HOME/user-files:${JAVA_CLASSPATH}"
 
 java $JAVA_OPTS -cp "$CLASSPATH" io.gatling.app.Gatling "$@"
