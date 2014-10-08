@@ -1,3 +1,6 @@
+import com.typesafe.sbt.SbtNativePackager._
+import NativePackagerKeys._
+
 name := "gatsby"
 
 version := "0.1.0"
@@ -28,3 +31,4 @@ scalariformSettings
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
+packageArchetype.java_application
