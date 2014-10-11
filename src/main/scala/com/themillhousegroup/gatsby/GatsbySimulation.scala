@@ -3,6 +3,7 @@ package com.themillhousegroup.gatsby
 import io.gatling.core.scenario.Simulation
 import com.dividezero.stubby.core.model.StubExchange
 import org.slf4j.LoggerFactory
+import com.dividezero.stubby.core.model.StubExchange
 
 /**
  * A Gatling Simulation that automagically spins up
@@ -19,6 +20,8 @@ abstract class GatsbySimulation(listenPort: Int) extends Simulation {
   /** Any stub exchanges defined at this level will be added to the back end */
   val stubExchanges: Seq[StubExchange]
 
+  def addExchange(se: StubExchange) = stubbyServer.addExchange(se)
+
   before {
 
     logger.info(s"Launching tame Stubby on port $listenPort")
@@ -26,7 +29,7 @@ abstract class GatsbySimulation(listenPort: Int) extends Simulation {
 
     stubExchanges.foreach { se =>
       logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
-      stubbyServer.addExchange(se)
+      addExchange(se)
     }
   }
 
