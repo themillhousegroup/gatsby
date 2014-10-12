@@ -8,13 +8,17 @@ import com.dividezero.stubby.core.model.StubExchange
 
 case class ExpressionAndPlainString(exp: Expression[String], plain: String)
 
+trait CanAddStubExchanges {
+  def addExchange(se: StubExchange)
+}
+
 /**
  * A Gatling Simulation that automagically spins up
  * "the thing at the back" so that we can actually test
  * "the thing in the middle"
  *
  */
-abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation {
+abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation with CanAddStubExchanges {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
@@ -59,5 +63,5 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation {
 class GatsbySimulation(listenPort: Int) extends AbstractGatsbySimulation(listenPort) {
   val stubbyServer = new TameStubby()
 
-  val stubExchanges = Nil
+  val stubExchanges: Seq[StubExchange] = Nil
 }

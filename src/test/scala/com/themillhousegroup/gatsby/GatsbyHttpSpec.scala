@@ -1,5 +1,7 @@
 package com.themillhousegroup.gatsby
 
-class GatsbyHttpSpec {
+import org.specs2.mutable.Specification
+
+class GatsbyHttpSpec extends Specification {
 
 }

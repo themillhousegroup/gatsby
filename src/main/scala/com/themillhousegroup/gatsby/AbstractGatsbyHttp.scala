@@ -6,7 +6,7 @@ import io.gatling.http.request.builder.{ HttpRequestWithParamsBuilder, HttpReque
 import org.slf4j.LoggerFactory
 import com.dividezero.stubby.core.model.{ StubResponse, StubRequest, StubExchange }
 
-abstract class AbstractGatsbyHttp(requestName: Expression[String], simulation: GatsbySimulation) extends Http(requestName) {
+abstract class AbstractGatsbyHttp(requestName: Expression[String], simulation: CanAddStubExchanges) extends Http(requestName) {
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
