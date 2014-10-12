@@ -23,11 +23,12 @@ abstract class AbstractGatsbyHttp(requestName: Expression[String], simulation: C
     httpRequest(method, Left(url.exp))
   }
 
-  override def httpRequestWithParams(method: String, url: Expression[String]): HttpRequestWithParamsBuilder = {
+  def httpRequestWithParams(method: String, url: ExpressionAndPlainString): HttpRequestWithParamsBuilder = {
+    logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
     simulation.addExchange(
       buildExchange(method, url.toString))
 
-    httpRequestWithParams(method, Left(url))
+    httpRequestWithParams(method, Left(url.exp))
   }
 
 }

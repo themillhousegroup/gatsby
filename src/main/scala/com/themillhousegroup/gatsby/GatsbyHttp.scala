@@ -22,10 +22,13 @@ class GatsbyHttp(requestName: Expression[String], simulation: CanAddStubExchange
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
-  def get(url: ExpressionAndPlainString) = {
-    logger.info(s"Gatsby GET of ${url.plain}")
+  def get(url: ExpressionAndPlainString) = httpRequest("GET", url)
+  def post(url: ExpressionAndPlainString) = httpRequestWithParams("POST", url)
 
-    httpRequest("GET", url)
-  }
+  def put(url: ExpressionAndPlainString) = httpRequest("PUT", url)
+  def patch(url: ExpressionAndPlainString) = httpRequest("PATCH", url)
+  def head(url: ExpressionAndPlainString) = httpRequest("HEAD", url)
+  def delete(url: ExpressionAndPlainString) = httpRequest("DELETE", url)
+  def options(url: ExpressionAndPlainString) = httpRequest("OPTIONS", url)
 
 }
