@@ -1,14 +1,9 @@
 package com.themillhousegroup.gatsby
 
-import io.gatling.core.scenario.Simulation
-import com.dividezero.stubby.core.model.StubExchange
 import org.slf4j.LoggerFactory
-import com.dividezero.stubby.core.model.StubExchange
 import scala.collection.mutable
 import io.gatling.core.session._
-import com.dividezero.stubby.core.model.StubExchange
 import io.gatling.core.Predef._
-import com.themillhousegroup.gatsby.ExpressionAndPlainString
 import com.dividezero.stubby.core.model.StubExchange
 
 case class ExpressionAndPlainString(exp: Expression[String], plain: String)
@@ -19,15 +14,15 @@ case class ExpressionAndPlainString(exp: Expression[String], plain: String)
  * "the thing in the middle"
  *
  */
-abstract class GatsbySimulation(listenPort: Int) extends Simulation {
+abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
   implicit def s2eps(s: String) = ExpressionAndPlainString(stringToExpression(s), s)
 
-  val stubbyServer = new TameStubby()
+  val stubbyServer: StubbyServer
 
-  implicit val simulation: GatsbySimulation = this
+  implicit val simulation: AbstractGatsbySimulation = this
 
   /** Any stub exchanges defined at this level will be added to the back end */
   val stubExchanges: Seq[StubExchange]
@@ -59,4 +54,10 @@ abstract class GatsbySimulation(listenPort: Int) extends Simulation {
     logger.info(s"Shutting down tame Stubby on port $listenPort")
     stubbyServer.stop
   }
+}
+
+class GatsbySimulation(listenPort: Int) extends AbstractGatsbySimulation(listenPort) {
+  val stubbyServer = new TameStubby()
+
+  val stubExchanges = Nil
 }
