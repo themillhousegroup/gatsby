@@ -8,7 +8,7 @@ class GatsbySimulationSpec extends Specification with Mockito {
 
   val mockStubbyServer = mock[StubbyServer]
 
-  class TestGatsbySimulation(val stubExchanges: Seq[StubExchange]) extends AbstractGatsbySimulation(8888) {
+  class TestGatsbySimulation(val simulationWideExchanges: Seq[StubExchange]) extends AbstractGatsbySimulation(8888) {
     val stubbyServer = mockStubbyServer
   }
 
@@ -21,7 +21,7 @@ class GatsbySimulationSpec extends Specification with Mockito {
 
       testGatsbySimulation.before()
 
-      testGatsbySimulation.stubExchanges must haveLength(1)
+      testGatsbySimulation.simulationWideExchanges must haveLength(1)
       //      there was one(mockStubbyServer).addExchange(mockExchange)
 
     }

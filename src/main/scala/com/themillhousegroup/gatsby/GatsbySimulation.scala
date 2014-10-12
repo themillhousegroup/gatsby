@@ -28,8 +28,11 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation with
 
   implicit val simulation: AbstractGatsbySimulation = this
 
-  /** Any stub exchanges defined at this level will be added to the back end */
-  val stubExchanges: Seq[StubExchange]
+  /**
+   * Any stub exchanges defined at this level will be added to the back end
+   * and will exist for *all* scenarios.
+   */
+  val simulationWideExchanges: Seq[StubExchange]
 
   val scenarioExchanges = mutable.Buffer[StubExchange]()
 
@@ -42,7 +45,7 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation with
     logger.info(s"Launching tame Stubby on port $listenPort")
     stubbyServer.start(listenPort)
 
-    stubExchanges.foreach { se =>
+    simulationWideExchanges.foreach { se =>
       logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
       stubbyServer.addExchange(se)
     }
@@ -63,5 +66,5 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation with
 class GatsbySimulation(listenPort: Int) extends AbstractGatsbySimulation(listenPort) {
   val stubbyServer = new TameStubby()
 
-  val stubExchanges: Seq[StubExchange] = Nil
+  val simulationWideExchanges: Seq[StubExchange] = Nil
 }

@@ -7,7 +7,7 @@ import io.gatling.http.Predef._
 
 class BasicGatsbySimulation extends GatsbySimulation(9999) {
 
-  override val stubExchanges = Seq(
+  override val simulationWideExchanges = Seq(
     StubExchange( StubRequest(Some("GET"), Some("/"), Nil, Nil, None),
                   StubResponse(200, Nil, None))
   )

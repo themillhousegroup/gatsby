@@ -13,9 +13,8 @@ class DynamicGatsbySimulation extends GatsbySimulation(9999) {
 
   val scn1 = scenario("DynamicGatsbySimulation1")
     .exec(
-      gatsbyHttp("request_1")
-      .get("/first")
-      .check(status))
+      gatsbyHttp("request_1").get("/first").check(status)
+    )
     .pause(1)
 
 
