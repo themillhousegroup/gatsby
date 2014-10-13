@@ -8,6 +8,10 @@ import com.dividezero.stubby.core.model.StubExchange
 
 case class ExpressionAndPlainString(exp: Expression[String], plain: String)
 
+trait HasStubbyServer {
+  val stubbyServer: StubbyServer
+}
+
 trait CanAddStubExchanges {
   def addExchange(se: StubExchange)
 }
@@ -18,7 +22,10 @@ trait CanAddStubExchanges {
  * "the thing in the middle"
  *
  */
-abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation with CanAddStubExchanges {
+abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
+    with HasStubbyServer
+    with CanAddStubExchanges
+    with GatsbyAssertionSupport {
 
   private val logger = LoggerFactory.getLogger(getClass)
 

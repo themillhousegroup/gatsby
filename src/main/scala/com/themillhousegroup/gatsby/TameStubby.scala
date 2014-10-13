@@ -3,12 +3,13 @@ package com.themillhousegroup.gatsby
 import unfiltered.netty.Http
 import com.dividezero.stubby.standalone.{ Main, AppPlan, Server }
 import java.io.File
-import com.dividezero.stubby.core.model.StubExchange
+import com.dividezero.stubby.core.model.{ StubRequest, StubExchange }
 
 trait StubbyServer {
   def start(port: Int)
   def stop
   def addExchange(exch: StubExchange)
+  def requestsSeen: Seq[StubRequest]
 }
 
 /** This is ripped from stubby-standalone's Main object */
@@ -28,5 +29,9 @@ class TameStubby(paths: String*) extends StubbyServer {
 
   def addExchange(exch: StubExchange) = {
     server.service.addResponse(exch)
+  }
+
+  def requestsSeen = {
+    server.service.requests.toSeq
   }
 }
