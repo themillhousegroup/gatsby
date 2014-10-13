@@ -9,7 +9,7 @@ import com.dividezero.stubby.core.model.StubRequest
 trait GatsbyAssertionSupport {
   this: HasStubbyServer =>
 
-  lazy val gatsby = new GatsbySelector(this.stubbyServer)
+  lazy val stubby = new GatsbySelector(this.stubbyServer)
 }
 
 class GatsbySelector(val stubbyServer: StubbyServer) {

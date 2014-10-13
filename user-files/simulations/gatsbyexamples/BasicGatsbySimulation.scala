@@ -26,8 +26,8 @@ class BasicGatsbySimulation extends GatsbySimulation(9999) {
   ).protocols(httpConf)
     .assertions(
     global.successfulRequests.count.is(1),
-    gatsby.requestsSeen.is(1),
-    gatsby.requestsSeenFor("/").is(1),
-    gatsby.requestsSeenFor("/blurg").is(0)
+    stubby.requestsSeen.is(1),
+    stubby.requestsSeenFor("/").is(1),
+    stubby.requestsSeenFor("/blurg").is(0)
   )
 }
