@@ -24,4 +24,10 @@ class BasicGatsbySimulation extends GatsbySimulation(9999) {
   setUp(
     scn.inject(atOnceUsers(1))
   ).protocols(httpConf)
+    .assertions(
+    global.successfulRequests.count.is(1),
+    gatsby.requestsSeen.is(1),
+    gatsby.requestsSeenFor("/").is(1),
+    gatsby.requestsSeenFor("/blurg").is(0)
+  )
 }
