@@ -19,3 +19,7 @@ project/plugins/project/
 .idea_modules
 
 results
+
+# Don't include user-files other than Gatsby examples
+user-files/simulations/*
+!user-files/simulations/gatsbyexamples/*
