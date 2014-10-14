@@ -5,6 +5,26 @@ __Gat__[ling] at the front, __s__[tub]__by__ round the back.
 
 Put your network tool/middleware/whatever in the middle and verify it does what it should.
 
+### Concept
+ASCII art FTW:
+
+```
+    DSL	                             GATSBY                                      S.U.T
+   	                	    	/-------------------------\
+Configure "always-  			|                         |
+there" endpoints	   	    	|   [ Gatling Generates]  |
+								|   [ HTTP Requests    ] ---------------------------\
+Configure scenarios	 			|                         |                         |
+to test requests are	  =>	|                         |            /------------------------\
+answered appropriately	    	|                         |            | pass/block/rewrite/etc |
+	                       		|                         |            \------------------------/
+Assert that the (Stubby)		|                         |                         |
+endpoint "saw" the right   		|    [Stubby acts as]-------------------------------/
+requests coming in    			|    [HTTP endpoint ]     |
+                           		\-------------------------/
+```
+
+
 ### Usage
 Check out [Gatling's excellent documentation](http://gatling.io/docs/2.0.0/) to understand how to record and/or write files in the Gatling DSL. Once you're comfortable with that, just use some of the additional Gatsby classes to get the auto-Stubby working.
 
