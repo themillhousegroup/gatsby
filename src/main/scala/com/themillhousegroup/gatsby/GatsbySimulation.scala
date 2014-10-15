@@ -16,6 +16,10 @@ trait CanAddStubExchanges {
   def addExchange(se: StubExchange)
 }
 
+object GatsbyImplicits {
+  implicit def s2eps(s: String) = ExpressionAndPlainString(stringToExpression(s), s)
+}
+
 /**
  * A Gatling Simulation that automagically spins up
  * "the thing at the back" so that we can actually test
@@ -27,9 +31,9 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     with CanAddStubExchanges
     with GatsbyAssertionSupport {
 
-  private val logger = LoggerFactory.getLogger(getClass)
+  import GatsbyImplicits._
 
-  implicit def s2eps(s: String) = ExpressionAndPlainString(stringToExpression(s), s)
+  private val logger = LoggerFactory.getLogger(getClass)
 
   val stubbyServer: StubbyServer
 

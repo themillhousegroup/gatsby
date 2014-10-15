@@ -2,6 +2,7 @@ package com.themillhousegroup.gatsby
 
 import io.gatling.core.session._
 import org.slf4j.LoggerFactory
+import io.gatling.http.request.builder.{ HttpParam, HttpAttributes }
 
 object GatsbyHttp {
 
@@ -24,6 +25,10 @@ class GatsbyHttp(requestName: Expression[String], simulation: CanAddStubExchange
 
   def get(url: ExpressionAndPlainString) = httpRequest("GET", url)
   def post(url: ExpressionAndPlainString) = httpRequestWithParams("POST", url)
+
+  def post(url: ExpressionAndPlainString,
+    httpAttributes: HttpAttributes,
+    formParams: List[HttpParam]) = httpRequestWithParams("POST", url, httpAttributes, formParams)
 
   def put(url: ExpressionAndPlainString) = httpRequest("PUT", url)
   def patch(url: ExpressionAndPlainString) = httpRequest("PATCH", url)
