@@ -16,8 +16,12 @@ trait CanAddStubExchanges {
   def addExchange(se: StubExchange)
 }
 
-object GatsbyImplicits {
+object GatsbyImplicits extends GatsbyImplicitsTrait {
+}
+
+trait GatsbyImplicitsTrait {
   implicit def s2eps(s: String) = ExpressionAndPlainString(stringToExpression(s), s)
+
 }
 
 /**
@@ -29,9 +33,8 @@ object GatsbyImplicits {
 abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     with HasStubbyServer
     with CanAddStubExchanges
-    with GatsbyAssertionSupport {
-
-  import GatsbyImplicits._
+    with GatsbyAssertionSupport
+    with GatsbyImplicitsTrait {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
