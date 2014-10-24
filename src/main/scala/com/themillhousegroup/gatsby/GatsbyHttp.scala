@@ -22,6 +22,8 @@ object GatsbyHttp {
   }
 
   val applicationJson = Some("application/json")
+  val testXml = Some("text/xml")
+  val applicationXml = Some("application/xml")
 }
 
 /**
@@ -69,7 +71,6 @@ class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simula
 
   object GatsbyCheck extends io.gatling.core.check.Check[io.gatling.http.response.Response] {
     def check(response: Response, session: Session)(implicit cache: mutable.Map[Any, Any]): Validation[CheckResult] = {
-      println("Gatsby post-scenario check RUNNING")
       simulation.removeExchange(requestName)
       CheckResult.NoopCheckResultSuccess
     }
