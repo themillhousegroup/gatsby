@@ -11,7 +11,11 @@ if [ $# -gt 0 ]
 then
   echo "Forcing an SBT stage..."
   sbt stage
+  SBT_STAGE_RESULT=$?
 fi
 
-echo "Now launching Gatling..."
-./bin/gatling.sh
+if [ $SBT_STAGE_RESULT -eq 0 ]
+then
+  echo "Now launching Gatling..."
+  ./bin/gatling.sh
+fi
