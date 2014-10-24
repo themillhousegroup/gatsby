@@ -34,9 +34,15 @@ abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expressio
 
     // TODO: map the incoming HTTPAttributes and HttpParams to Stubby's StubParams
     // to get closer matching
-    simulation.addExchange(requestName)(buildExchange(method, url.plain))
 
-    new HttpRequestWithParamsBuilder(CommonAttributes(requestNameExp, method, Left(url.exp)), httpAttributes, formParams)
+    new GatsbyHttpRequestWithParamsWrapper(
+      //new HttpRequestWithParamsBuilder(
+      CommonAttributes(requestNameExp, method, Left(url.exp)), httpAttributes, formParams)({
+      logger.info("Running onBuild")
+      simulation.addExchange(requestName)(buildExchange(method, url.plain))
+    })
+
+    //)
   }
 
 }
