@@ -13,8 +13,14 @@ trait HasStubbyServer {
 }
 
 trait CanAddStubExchanges {
-  def addExchange(se: StubExchange)
+  def addExchange(requestName: String)(se: StubExchange)
 }
+
+trait CanRemoveStubExchanges {
+  def removeExchange(prefix: String)
+}
+
+trait DynamicStubExchange extends CanAddStubExchanges with CanRemoveStubExchanges
 
 object GatsbyImplicits extends GatsbyImplicitsTrait {
 }
@@ -32,7 +38,7 @@ trait GatsbyImplicitsTrait {
  */
 abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     with HasStubbyServer
-    with CanAddStubExchanges
+    with DynamicStubExchange
     with GatsbyAssertionSupport
     with GatsbyImplicitsTrait {
 
@@ -48,10 +54,26 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
    */
   val simulationWideExchanges: Seq[StubExchange]
 
-  val scenarioExchanges = mutable.Buffer[StubExchange]()
+  val scenarioExchanges = mutable.Map[String, StubExchange]()
 
-  def addExchange(se: StubExchange) = {
-    scenarioExchanges += se
+  def addExchange(requestName: String)(se: StubExchange) = {
+    scenarioExchanges += (requestName -> se)
+    logger.info(s"Adding scenario ($requestName) exchange: ${se.request.method.get} ${se.request.path.get}")
+    stubbyServer.addExchange(se)
+  }
+
+  def removeExchange(prefix: String) = {
+    logger.info(s"Removing scenario exchange for prefix: $prefix")
+    scenarioExchanges.filter {
+      case (k, _) => k.startsWith(prefix)
+    }.foreach {
+      case (k, v) => {
+        logger.info(s"Removing scenario exchange for $k")
+        stubbyServer.removeExchange(v)
+        scenarioExchanges -= k
+      }
+    }
+
   }
 
   before {
@@ -63,12 +85,6 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
       logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
       stubbyServer.addExchange(se)
     }
-
-    scenarioExchanges.foreach { se =>
-      logger.info("Adding scenario exchange: " + se.request.method.get + " " + se.request.path.get)
-      stubbyServer.addExchange(se)
-    }
-
   }
 
   after {

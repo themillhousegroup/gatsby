@@ -14,25 +14,25 @@ class GatsbyHttpSpec extends Specification with Mockito {
   "GatsbyHTTP" should {
     "Allow a GET to be defined, that results in Stubby getting configured" in {
 
-      implicit val mockStubbyBackend = mock[CanAddStubExchanges]
+      implicit val mockStubbyBackend = mock[DynamicStubExchange]
 
       gatsbyHttp("requestName").get("/foo")
 
-      there was one(mockStubbyBackend).addExchange(any[StubExchange])
+      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"))(any[StubExchange])
     }
 
     "Allow a POST to be defined, that results in Stubby getting configured" in {
 
-      implicit val mockStubbyBackend = mock[CanAddStubExchanges]
+      implicit val mockStubbyBackend = mock[DynamicStubExchange]
 
       gatsbyHttp("requestName").post("/foo")
 
-      there was one(mockStubbyBackend).addExchange(any[StubExchange])
+      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"))(any[StubExchange])
     }
 
     "Allow a POST with a body to be defined, that results in Stubby getting configured" in {
 
-      implicit val mockStubbyBackend = mock[CanAddStubExchanges]
+      implicit val mockStubbyBackend = mock[DynamicStubExchange]
 
       // TODO no place to set headers yet!
 
@@ -40,7 +40,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
 
       gatsbyHttp("requestName").post("/foo", HttpAttributes(body = Some(StringBody(body))), Nil)
 
-      there was one(mockStubbyBackend).addExchange(any[StubExchange])
+      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"))(any[StubExchange])
     }
   }
 }

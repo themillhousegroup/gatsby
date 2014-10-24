@@ -9,6 +9,7 @@ trait StubbyServer {
   def start(port: Int)
   def stop
   def addExchange(exch: StubExchange)
+  def removeExchange(exch: StubExchange)
   def requestsSeen: Seq[StubRequest]
 }
 
@@ -29,6 +30,10 @@ class TameStubby(paths: String*) extends StubbyServer {
 
   def addExchange(exch: StubExchange) = {
     server.service.addResponse(exch)
+  }
+
+  def removeExchange(exch: StubExchange) = {
+    server.service.deleteResponse(exch)
   }
 
   def requestsSeen = {

@@ -12,6 +12,8 @@ then
   echo "Forcing an SBT stage..."
   sbt stage
   SBT_STAGE_RESULT=$?
+else 
+  SBT_STAGE_RESULT=0
 fi
 
 if [ $SBT_STAGE_RESULT -eq 0 ]
