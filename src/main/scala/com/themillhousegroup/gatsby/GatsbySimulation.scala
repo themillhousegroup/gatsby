@@ -13,7 +13,7 @@ trait HasStubbyServer {
 }
 
 trait CanAddStubExchanges {
-  def addExchange(requestName: String)(se: StubExchange)
+  def addExchange(requestName: String, se: StubExchange)
 }
 
 trait CanRemoveStubExchanges {
@@ -56,7 +56,7 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
 
   val scenarioExchanges = mutable.Map[String, StubExchange]()
 
-  def addExchange(requestName: String)(se: StubExchange) = {
+  def addExchange(requestName: String, se: StubExchange) = {
     scenarioExchanges += (requestName -> se)
     logger.info(s"Adding scenario ($requestName) exchange: ${se.request.method.get} ${se.request.path.get}")
     stubbyServer.addExchange(se)

@@ -18,7 +18,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
 
       gatsbyHttp("requestName").get("/foo")
 
-      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"))(any[StubExchange])
+      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"), any[StubExchange])
     }
 
     "Allow a POST to be defined, that results in Stubby getting configured" in {
@@ -27,7 +27,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
 
       gatsbyHttp("requestName").post("/foo")
 
-      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"))(any[StubExchange])
+      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"), any[StubExchange])
     }
 
     "Allow a POST with a body to be defined, that results in Stubby getting configured" in {
@@ -40,7 +40,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
 
       gatsbyHttp("requestName").post("/foo", HttpAttributes(body = Some(StringBody(body))), Nil)
 
-      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"))(any[StubExchange])
+      there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"), any[StubExchange])
     }
   }
 }

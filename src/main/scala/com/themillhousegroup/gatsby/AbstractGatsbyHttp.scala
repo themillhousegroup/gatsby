@@ -19,7 +19,7 @@ abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expressio
 
   def httpRequest(method: String, url: ExpressionAndPlainString): HttpRequestBuilder = {
     logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
-    simulation.addExchange(requestName)(buildExchange(method, url.plain))
+    simulation.addExchange(requestName, buildExchange(method, url.plain))
 
     httpRequest(method, Left(url.exp))
   }
@@ -29,20 +29,23 @@ abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expressio
     httpAttributes: HttpAttributes = new HttpAttributes(),
     formParams: List[HttpParam] = Nil): HttpRequestWithParamsBuilder = {
     logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
+    simulation.addExchange(requestName, buildExchange(method, url.plain))
 
     // TODO: need to include CommonAttributes to allow headers to be set and/or matched.
 
     // TODO: map the incoming HTTPAttributes and HttpParams to Stubby's StubParams
     // to get closer matching
 
-    new GatsbyHttpRequestWithParamsWrapper(
-      //new HttpRequestWithParamsBuilder(
-      CommonAttributes(requestNameExp, method, Left(url.exp)), httpAttributes, formParams)({
-      logger.info("Running onBuild")
-      simulation.addExchange(requestName)(buildExchange(method, url.plain))
-    })
+    //    new GatsbyHttpRequestWithParamsWrapper(
+    //      //new HttpRequestWithParamsBuilder(
+    //      CommonAttributes(requestNameExp, method, Left(url.exp)), httpAttributes, formParams)({
+    //      logger.info("Running onBuild")
+    //      simulation.addExchange(requestName, buildExchange(method, url.plain))
+    //    })
 
     //)
+
+    new HttpRequestWithParamsBuilder(CommonAttributes(requestNameExp, method, Left(url.exp)), httpAttributes, formParams)
   }
 
 }

@@ -57,7 +57,7 @@ class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simula
   def withAdditionalStubbing(exchanges: StubExchange*): GatsbyHttp = {
     exchanges.foreach { ex =>
       val uniqueName = s"${requestName}--${ex.request.method.get}--${ex.request.path.get}"
-      simulation.addExchange(uniqueName)(ex)
+      simulation.addExchange(uniqueName, ex)
     }
     this
   }
