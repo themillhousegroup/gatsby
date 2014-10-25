@@ -35,7 +35,16 @@ class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simula
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
+  /** The Stubby endpoint will return an empty 200 OK */
   def get(url: ExpressionAndPlainString) = httpRequest("GET", url)
+
+  /** The Stubby endpoint will return the response details configured here */
+  def get(url: ExpressionAndPlainString,
+    responseStatus: Int = 200,
+    responseBody: Option[AnyRef] = None,
+    responseContentType: Option[String] = None) =
+    httpRequest("GET", url, responseStatus, responseBody, responseContentType)
+
   def post(url: ExpressionAndPlainString) = httpRequestWithParams("POST", url)
 
   def post(url: ExpressionAndPlainString,
