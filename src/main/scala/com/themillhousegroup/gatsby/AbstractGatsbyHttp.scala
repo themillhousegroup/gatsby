@@ -17,11 +17,11 @@ abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expressio
       StubResponse(responseStatus, responseContentType.map(StubParam("Content-Type", _)).toList, responseBody))
   }
 
-  def httpRequest(method: String, url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): HttpRequestBuilder = {
+  def httpRequest(method: String, url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttpRequestWrapper = {
     logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
     simulation.addExchange(requestName, buildExchange(method, url.plain, responseStatus, responseBody, responseContentType))
 
-    httpRequest(method, Left(url.exp))
+    new GatsbyHttpRequestWrapper(CommonAttributes(requestNameExp, method, Left(url.exp)), HttpAttributes())
   }
 
   def httpRequestWithParams(method: String,
