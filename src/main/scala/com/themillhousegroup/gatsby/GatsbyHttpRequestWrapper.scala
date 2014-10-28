@@ -22,6 +22,7 @@ import io.gatling.core.controller.throttle.ThrottlingProtocol
 import io.gatling.http.request.builder.CommonAttributes
 import io.gatling.http.request.HttpRequestDef
 import com.ning.http.client.Request
+import io.gatling.core.action.Chainable
 
 class GatsbyHttpRequestWrapper(commonAttributes: CommonAttributes, httpAttributes: HttpAttributes) extends AbstractHttpRequestBuilder[GatsbyHttpRequestWrapper](commonAttributes, httpAttributes) {
 
@@ -63,6 +64,22 @@ class GatsbyHttpRequestActionBuilder(requestBuilder: AbstractHttpRequestBuilder[
     logger.info("GatsbyHttpRequestActionBuilder build()")
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
     val httpRequest = requestBuilder.build(httpProtocol(protocols), throttled)
+
+
+    val tearDown = actor(new TearDown("blah", next))
+    val request = actor(new HttpRequestAction(httpRequest, tearDown))
+    val spinUp = actor(new SpinUp("blurgh", request))
+
+    // should return spinUp...
+
     actor(new HttpRequestAction(httpRequest, next))
   }
+}
+
+class SpinUp(msg:String, val next:ActorRef) extends Chainable {
+  println(s"spinning up $msg")
+}
+
+class TearDown(msg:String, val next:ActorRef) extends Chainable {
+  println(s"tearing down $msg")
 }
