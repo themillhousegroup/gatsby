@@ -1,6 +1,7 @@
 package gatsbyexamples
 
 import io.gatling.core.Predef._
+import com.themillhousegroup.gatsby.GatsbyHttpRequestActionBuilder.withStubby
 import com.themillhousegroup.gatsby.GatsbySimulation
 import com.themillhousegroup.gatsby.GatsbyHttp._
 import io.gatling.http.Predef._
@@ -26,9 +27,10 @@ class IndependentScenarioSimulation extends GatsbySimulation(9999) {
 
   val scn2 = scenario("IndependentScenarioSimulation2")
     .exec(
+      withStubby(
       gatsbyHttp("request_2")
         .get("/first", 404)
-        .check(status.is(404))
+        .check(status.is(404)))
     )
     .pause(1)
 

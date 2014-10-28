@@ -47,6 +47,12 @@ class GatsbyHttpRequestWithParamsWrapper(commonAttributes: CommonAttributes,
   }
 }
 
+object GatsbyHttpRequestActionBuilder {
+  def withStubby(requestBuilder: AbstractHttpRequestBuilder[_]) = {
+    new GatsbyHttpRequestActionBuilder(requestBuilder)
+  }
+}
+
 class GatsbyHttpRequestActionBuilder(requestBuilder: AbstractHttpRequestBuilder[_]) extends HttpActionBuilder {
 
   private val logger = LoggerFactory.getLogger(getClass)
