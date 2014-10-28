@@ -39,11 +39,7 @@ class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simula
   def get(url: ExpressionAndPlainString) = httpRequest("GET", url)
 
   /** The Stubby endpoint will return the response details configured here */
-  def get(url: ExpressionAndPlainString,
-    responseStatus: Int = 200,
-    responseBody: Option[AnyRef] = None,
-    responseContentType: Option[String] = None) =
-    httpRequest("GET", url, responseStatus, responseBody, responseContentType)
+  def get(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("GET", url, responseStatus, responseBody, responseContentType)
 
   def post(url: ExpressionAndPlainString) = httpRequestWithParams("POST", url)
 
@@ -54,11 +50,11 @@ class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simula
     httpRequestWithParams("POST", url, httpAttributes, formParams).check(new GatsbyPostScenarioCleanup)
   }
 
-  def put(url: ExpressionAndPlainString) = httpRequest("PUT", url)
-  def patch(url: ExpressionAndPlainString) = httpRequest("PATCH", url)
-  def head(url: ExpressionAndPlainString) = httpRequest("HEAD", url)
-  def delete(url: ExpressionAndPlainString) = httpRequest("DELETE", url)
-  def options(url: ExpressionAndPlainString) = httpRequest("OPTIONS", url)
+  def put(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("PUT", url, responseStatus, responseBody, responseContentType)
+  def patch(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("PATCH", url, responseStatus, responseBody, responseContentType)
+  def head(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("HEAD", url, responseStatus, responseBody, responseContentType)
+  def delete(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("DELETE", url, responseStatus, responseBody, responseContentType)
+  def options(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("OPTIONS", url, responseStatus, responseBody, responseContentType)
 
   /**
    * If you have many stub exchanges to set up, configure them here
