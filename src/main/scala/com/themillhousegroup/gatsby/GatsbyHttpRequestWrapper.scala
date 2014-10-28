@@ -65,21 +65,26 @@ class GatsbyHttpRequestActionBuilder(requestBuilder: AbstractHttpRequestBuilder[
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
     val httpRequest = requestBuilder.build(httpProtocol(protocols), throttled)
 
-
     val tearDown = actor(new TearDown("blah", next))
     val request = actor(new HttpRequestAction(httpRequest, tearDown))
     val spinUp = actor(new SpinUp("blurgh", request))
 
-    // should return spinUp...
-
-    actor(new HttpRequestAction(httpRequest, next))
+    //actor(new HttpRequestAction(httpRequest, next))
+    spinUp
   }
 }
 
-class SpinUp(msg:String, val next:ActorRef) extends Chainable {
-  println(s"spinning up $msg")
+class SpinUp(msg: String, val next: ActorRef) extends Chainable {
+
+  def execute(session: Session): Unit = {
+
+    println(s"spinning up $msg for scenario: ${session.scenarioName}")
+  }
 }
 
-class TearDown(msg:String, val next:ActorRef) extends Chainable {
-  println(s"tearing down $msg")
+class TearDown(msg: String, val next: ActorRef) extends Chainable {
+
+  def execute(session: Session): Unit = {
+    println(s"tearing down $msg for scenario: ${session.scenarioName}")
+  }
 }
