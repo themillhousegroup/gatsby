@@ -24,7 +24,6 @@ import io.gatling.http.request.HttpRequestDef
 import com.ning.http.client.Request
 
 class GatsbyHttpRequestWrapper(commonAttributes: CommonAttributes, httpAttributes: HttpAttributes) extends AbstractHttpRequestBuilder[GatsbyHttpRequestWrapper](commonAttributes, httpAttributes) {
-  implicit def toActionBuilder(requestBuilder: AbstractHttpRequestBuilder[_]) = new GatsbyHttpRequestActionBuilder(requestBuilder)
 
   override def newInstance(commonAttributes: CommonAttributes) = new GatsbyHttpRequestWrapper(commonAttributes, httpAttributes)
   override def newInstance(httpAttributes: HttpAttributes) = new GatsbyHttpRequestWrapper(commonAttributes, httpAttributes)
