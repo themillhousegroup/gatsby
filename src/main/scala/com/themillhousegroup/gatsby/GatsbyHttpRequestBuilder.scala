@@ -51,18 +51,18 @@ class GatsbyHttpRequestWithParamsWrapper(commonAttributes: CommonAttributes,
   }
 }
 
-object GatsbyHttpRequestActionBuilder {
+object GatsbyHttpActionBuilder {
 
   /** If you just want the given request to be responded-to with a simple 200 OK with empty body and no Content-Type, this is your method */
-  def withStubby(requestBuilder: GatsbyHttpRequestBuilder): GatsbyHttpRequestActionBuilder = withStubby()(requestBuilder)
+  def withStubby(requestBuilder: GatsbyHttpRequestBuilder): GatsbyHttpActionBuilder = withStubby()(requestBuilder)
 
   /** Supplying extra details about how Stubby should respond */
-  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: GatsbyHttpRequestBuilder): GatsbyHttpRequestActionBuilder = {
-    new GatsbyHttpRequestActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType)
+  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: GatsbyHttpRequestBuilder): GatsbyHttpActionBuilder = {
+    new GatsbyHttpActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType)
   }
 }
 
-class GatsbyHttpRequestActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
+class GatsbyHttpActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
     responseStatus: Int = 200,
     responseBody: Option[AnyRef] = None,
     responseContentType: Option[String]) extends HttpActionBuilder {

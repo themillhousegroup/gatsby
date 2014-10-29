@@ -1,7 +1,7 @@
 package gatsbyexamples
 
 import io.gatling.core.Predef._
-import com.themillhousegroup.gatsby.GatsbyHttpRequestActionBuilder._
+import com.themillhousegroup.gatsby.GatsbyHttpActionBuilder._
 import com.themillhousegroup.gatsby.GatsbySimulation
 import com.themillhousegroup.gatsby.GatsbyHttp._
 import io.gatling.http.Predef._
