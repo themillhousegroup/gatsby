@@ -2,29 +2,16 @@ package com.themillhousegroup.gatsby
 
 import io.gatling.http.request.builder._
 import io.gatling.http.config.HttpProtocol
-import io.gatling.http.request.HttpRequestDef
-import io.gatling.http.request.builder.HttpAttributes
-import io.gatling.http.request.builder.CommonAttributes
-import io.gatling.http.request.HttpRequestDef
-import io.gatling.http.action.{ HttpRequestActionBuilder, HttpRequestAction, HttpActionBuilder }
+import io.gatling.http.action.{ HttpRequestAction, HttpActionBuilder }
 import akka.actor.ActorRef
 import io.gatling.core.config.Protocols
-import io.gatling.core.controller.throttle.ThrottlingProtocol
 import akka.actor.ActorDSL._
-import io.gatling.http.request.builder.HttpAttributes
-import io.gatling.core.controller.throttle.ThrottlingProtocol
-import io.gatling.http.request.builder.CommonAttributes
-import io.gatling.http.request.HttpRequestDef
-import org.slf4j.LoggerFactory
 import io.gatling.core.session._
 import io.gatling.http.request.builder.HttpAttributes
 import io.gatling.core.controller.throttle.ThrottlingProtocol
 import io.gatling.http.request.builder.CommonAttributes
-import io.gatling.http.request.HttpRequestDef
 import com.ning.http.client.Request
-import io.gatling.core.action.Chainable
-import com.dividezero.stubby.core.model.StubExchange
-import io.gatling.core.validation.Validation
+import com.themillhousegroup.gatsby.actors.{TearDown, SpinUp}
 
 class GatsbyHttpRequestBuilder(commonAttributes: CommonAttributes,
     httpAttributes: HttpAttributes,
@@ -71,6 +58,7 @@ class GatsbyHttpActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
       responseBody,
       responseContentType)
 
+    // Build the chain of 3 actors that configure Stubby, fire the request, and de-configure Stubby:
     val tearDown = actor(new TearDown(requestBuilder.simulation, requestBuilder.requestName, next))
     val request = actor(new HttpRequestAction(httpRequest, tearDown))
     val spinUp = actor(new SpinUp(requestBuilder.simulation, requestBuilder.requestName, se, request))
@@ -79,25 +67,6 @@ class GatsbyHttpActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
   }
 }
 
-class SpinUp(val simulation: DynamicStubExchange, val requestName: String, val se: StubExchange, val next: ActorRef) extends Chainable {
 
-  def execute(session: Session): Unit = {
 
-    println(s"spinning up auto-response to $requestName for scenario: ${session.scenarioName}")
-    simulation.acquireLock(requestName).map { ready =>
-      simulation.addExchange(requestName, se)
-      next ! session
-    }
 
-  }
-}
-
-class TearDown(val simulation: DynamicStubExchange, val requestName: String, val next: ActorRef) extends Chainable {
-
-  def execute(session: Session): Unit = {
-    println(s"tearing down $requestName after scenario: ${session.scenarioName}")
-    simulation.removeExchange(requestName)
-    simulation.releaseLock(requestName)
-    next ! session
-  }
-}
