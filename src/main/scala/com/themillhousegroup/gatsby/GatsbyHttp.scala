@@ -1,13 +1,6 @@
 package com.themillhousegroup.gatsby
 
-import org.slf4j.LoggerFactory
 import io.gatling.http.request.builder.{ HttpParam, HttpAttributes }
-import io.gatling.http.check.HttpCheck
-import io.gatling.http.check.HttpCheckScope.Status
-import io.gatling.http.response.Response
-import scala.collection.mutable
-import io.gatling.core.validation.Validation
-import io.gatling.core.check.CheckResult
 import io.gatling.core.session._
 import io.gatling.core.Predef._
 
@@ -18,7 +11,7 @@ object GatsbyHttp {
    * with this one to get Gatsby functionality.
    */
 
-  def http(requestName: String)(implicit simulation: DynamicStubExchange) = {
+  def gatsbyHttp(requestName: String)(implicit simulation: DynamicStubExchange) = {
     new GatsbyHttp(requestName, requestName, simulation)
   }
 
@@ -28,17 +21,14 @@ object GatsbyHttp {
 }
 
 /**
- * By declaring a test endpoint with one of these "url:ExpressionAndPlainString" methods,
- * you're indicating that you'd like Gatsby to set
- * up Stubby endpoints for each one.
+ * Echoing the "normal" HTTP verbs as supplied by io.gatling.http.request.builder.Http,
+ * but using the ExpressionAndPlainString container so we can resolve values *before*
+ * the simulation is actually run.
  */
 class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends AbstractGatsbyHttp(requestName, requestNameExp, simulation) with HasLogger {
 
   /** The Stubby endpoint will return an empty 200 OK */
   def get(url: ExpressionAndPlainString) = httpRequest("GET", url)
-
-  /** The Stubby endpoint will return the response details configured here */
-  def get(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("GET", url, responseStatus, responseBody, responseContentType)
 
   def post(url: ExpressionAndPlainString) = httpRequestWithParams("POST", url)
 
@@ -46,14 +36,14 @@ class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simula
     httpAttributes: HttpAttributes,
     formParams: List[HttpParam]) = {
 
-    httpRequestWithParams("POST", url, httpAttributes, formParams).check(new GatsbyPostScenarioCleanup)
+    httpRequestWithParams("POST", url, httpAttributes, formParams)
   }
 
-  def put(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("PUT", url, responseStatus, responseBody, responseContentType)
-  def patch(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("PATCH", url, responseStatus, responseBody, responseContentType)
-  def head(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("HEAD", url, responseStatus, responseBody, responseContentType)
-  def delete(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("DELETE", url, responseStatus, responseBody, responseContentType)
-  def options(url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = httpRequest("OPTIONS", url, responseStatus, responseBody, responseContentType)
+  def put(url: ExpressionAndPlainString) = httpRequest("PUT", url)
+  def patch(url: ExpressionAndPlainString) = httpRequest("PATCH", url)
+  def head(url: ExpressionAndPlainString) = httpRequest("HEAD", url)
+  def delete(url: ExpressionAndPlainString) = httpRequest("DELETE", url)
+  def options(url: ExpressionAndPlainString) = httpRequest("OPTIONS", url)
 
   /**
    * If you have many stub exchanges to set up, configure them here
@@ -72,16 +62,5 @@ class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simula
   //  def withAdditionalStubbing(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttp = {
   //    withAdditionalStubbing(buildExchange(method, url, responseStatus, responseBody, responseContentType))
   //  }
-
-  object GatsbyCheck extends io.gatling.core.check.Check[io.gatling.http.response.Response] {
-    def check(response: Response, session: Session)(implicit cache: mutable.Map[Any, Any]): Validation[CheckResult] = {
-      simulation.removeExchange(requestName)
-      CheckResult.NoopCheckResultSuccess
-    }
-  }
-
-  class GatsbyPostScenarioCleanup extends HttpCheck(GatsbyCheck, Status, None) {
-
-  }
 }
 

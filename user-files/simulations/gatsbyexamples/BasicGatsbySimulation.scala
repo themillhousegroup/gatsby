@@ -5,6 +5,12 @@ import com.themillhousegroup.gatsby.GatsbySimulation
 import com.dividezero.stubby.core.model.{StubResponse, StubRequest, StubExchange}
 import io.gatling.http.Predef._
 
+/**
+ * If all you need is an unchanging backend for your tests,
+ * define some 'simulationWideExchanges'.
+ *
+ * You can also make some simple assertions about that backend at the end of the simulation.
+ */
 class BasicGatsbySimulation extends GatsbySimulation(9999) {
 
   override val simulationWideExchanges = Seq(
