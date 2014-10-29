@@ -3,7 +3,7 @@ package com.themillhousegroup.gatsby
 import unfiltered.netty.Http
 import com.dividezero.stubby.standalone.{ Main, AppPlan, Server }
 import java.io.File
-import com.dividezero.stubby.core.model.{ StubRequest, StubExchange }
+import com.dividezero.stubby.core.model.{ StubParam, StubResponse, StubRequest, StubExchange }
 
 trait StubbyServer {
   def start(port: Int)
@@ -38,5 +38,13 @@ class TameStubby(paths: String*) extends StubbyServer {
 
   def requestsSeen = {
     server.service.requests.toSeq
+  }
+}
+
+object StubExchanges {
+  def buildExchange(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): StubExchange = {
+    StubExchange(
+      StubRequest(Some(method), Some(url), Nil, Nil, None),
+      StubResponse(responseStatus, responseContentType.map(StubParam("Content-Type", _)).toList, responseBody))
   }
 }

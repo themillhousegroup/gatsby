@@ -3,25 +3,17 @@ package com.themillhousegroup.gatsby
 import io.gatling.core.session._
 import io.gatling.http.request.builder._
 import org.slf4j.LoggerFactory
-import com.dividezero.stubby.core.model.{ StubParam, StubRequest, StubResponse, StubExchange }
 import io.gatling.http.request.builder.HttpAttributes
-import scala.Some
+import com.themillhousegroup.gatsby.StubExchanges.buildExchange
 
 abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends Http(requestNameExp) {
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
-  protected def buildExchange(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): StubExchange = {
-    StubExchange(
-      StubRequest(Some(method), Some(url), Nil, Nil, None),
-      StubResponse(responseStatus, responseContentType.map(StubParam("Content-Type", _)).toList, responseBody))
-  }
-
   def httpRequest(method: String, url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttpRequestWrapper = {
     logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
-    simulation.addExchange(requestName, buildExchange(method, url.plain, responseStatus, responseBody, responseContentType))
 
-    new GatsbyHttpRequestWrapper(CommonAttributes(requestNameExp, method, Left(url.exp)), HttpAttributes())
+    new GatsbyHttpRequestWrapper(CommonAttributes(requestNameExp, method, Left(url.exp)), HttpAttributes(), url.plain, requestName, simulation)
   }
 
   def httpRequestWithParams(method: String,

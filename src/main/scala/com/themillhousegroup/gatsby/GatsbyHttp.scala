@@ -16,7 +16,7 @@ object GatsbyHttp {
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
-  def gatsbyHttp(requestName: String)(implicit simulation: DynamicStubExchange) = { 
+  def gatsbyHttp(requestName: String)(implicit simulation: DynamicStubExchange) = {
     new GatsbyHttp(requestName, requestName, simulation)
   }
 
@@ -58,20 +58,20 @@ class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simula
   /**
    * If you have many stub exchanges to set up, configure them here
    */
-  def withAdditionalStubbing(exchanges: StubExchange*): GatsbyHttp = {
-    exchanges.foreach { ex =>
-      val uniqueName = s"${requestName}--${ex.request.method.get}--${ex.request.path.get}"
-      simulation.addExchange(uniqueName, ex)
-    }
-    this
-  }
+  //  def withAdditionalStubbing(exchanges: StubExchange*): GatsbyHttp = {
+  //    exchanges.foreach { ex =>
+  //      val uniqueName = s"${requestName}--${ex.request.method.get}--${ex.request.path.get}"
+  //      simulation.addExchange(uniqueName, ex)
+  //    }
+  //    this
+  //  }
 
   /**
    * Shortcut method when you just need one quick-and-dirty stub endpoint that returns a status, and optionally a body and a given Content-Type
    */
-  def withAdditionalStubbing(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttp = {
-    withAdditionalStubbing(buildExchange(method, url, responseStatus, responseBody, responseContentType))
-  }
+  //  def withAdditionalStubbing(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttp = {
+  //    withAdditionalStubbing(buildExchange(method, url, responseStatus, responseBody, responseContentType))
+  //  }
 
   object GatsbyCheck extends io.gatling.core.check.Check[io.gatling.http.response.Response] {
     def check(response: Response, session: Session)(implicit cache: mutable.Map[Any, Any]): Validation[CheckResult] = {

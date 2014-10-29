@@ -27,7 +27,6 @@ object GatsbyImplicits extends GatsbyImplicitsTrait {
 
 trait GatsbyImplicitsTrait {
   implicit def s2eps(s: String) = ExpressionAndPlainString(stringToExpression(s), s)
-
 }
 
 /**

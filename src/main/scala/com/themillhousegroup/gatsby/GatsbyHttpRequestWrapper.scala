@@ -23,17 +23,20 @@ import io.gatling.http.request.builder.CommonAttributes
 import io.gatling.http.request.HttpRequestDef
 import com.ning.http.client.Request
 import io.gatling.core.action.Chainable
+import com.dividezero.stubby.core.model.StubExchange
+import io.gatling.core.validation.Validation
 
-class GatsbyHttpRequestWrapper(commonAttributes: CommonAttributes, httpAttributes: HttpAttributes) extends AbstractHttpRequestBuilder[GatsbyHttpRequestWrapper](commonAttributes, httpAttributes) {
+class GatsbyHttpRequestWrapper(commonAttributes: CommonAttributes,
+    httpAttributes: HttpAttributes,
+    val url: String,
+    val requestName: String,
+    val simulation: DynamicStubExchange) extends AbstractHttpRequestBuilder[GatsbyHttpRequestWrapper](commonAttributes, httpAttributes) {
 
-  override def newInstance(commonAttributes: CommonAttributes) = new GatsbyHttpRequestWrapper(commonAttributes, httpAttributes)
-  override def newInstance(httpAttributes: HttpAttributes) = new GatsbyHttpRequestWrapper(commonAttributes, httpAttributes)
+  def newInstance(commonAttributes: CommonAttributes): GatsbyHttpRequestWrapper = new GatsbyHttpRequestWrapper(commonAttributes, httpAttributes, url, requestName, simulation)
 
-  override def request(protocol: HttpProtocol): Expression[Request] = {
-    logger.info("Intercepting request()")
-    new HttpRequestExpressionBuilder(commonAttributes, httpAttributes, protocol).build
-  }
+  def newInstance(httpAttributes: HttpAttributes): GatsbyHttpRequestWrapper = new GatsbyHttpRequestWrapper(commonAttributes, httpAttributes, url, requestName, simulation)
 
+  def request(protocol: HttpProtocol): Expression[Request] = new HttpRequestExpressionBuilder(commonAttributes, httpAttributes, protocol).build
 }
 
 class GatsbyHttpRequestWithParamsWrapper(commonAttributes: CommonAttributes,
@@ -49,16 +52,22 @@ class GatsbyHttpRequestWithParamsWrapper(commonAttributes: CommonAttributes,
 }
 
 object GatsbyHttpRequestActionBuilder {
-  def withStubby(requestBuilder: GatsbyHttpRequestWrapper) = {
-    new GatsbyHttpRequestActionBuilder(requestBuilder)
+
+  /** If you just want the given request to be responded-to with a simple 200 OK with empty body and no Content-Type, this is your method */
+  def withStubby(requestBuilder: GatsbyHttpRequestWrapper): GatsbyHttpRequestActionBuilder = withStubby()(requestBuilder)
+
+  /** Supplying extra details about how Stubby should respond */
+  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: GatsbyHttpRequestWrapper): GatsbyHttpRequestActionBuilder = {
+    new GatsbyHttpRequestActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType)
   }
 }
 
-class GatsbyHttpRequestActionBuilder(requestBuilder: GatsbyHttpRequestWrapper) extends HttpActionBuilder {
+class GatsbyHttpRequestActionBuilder(requestBuilder: GatsbyHttpRequestWrapper,
+    responseStatus: Int = 200,
+    responseBody: Option[AnyRef] = None,
+    responseContentType: Option[String]) extends HttpActionBuilder {
 
   private val logger = LoggerFactory.getLogger(getClass)
-
-  requestBuilder.
 
   logger.info("GatsbyHttpRequestActionBuilder constructed")
 
@@ -67,28 +76,35 @@ class GatsbyHttpRequestActionBuilder(requestBuilder: GatsbyHttpRequestWrapper) e
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
     val httpRequest = requestBuilder.build(httpProtocol(protocols), throttled)
 
-    val tearDown = actor(new TearDown("blah", next))
-    val request = actor(new HttpRequestAction(httpRequest, tearDown))
-    val spinUp = actor(new SpinUp("blurgh", request))
+    val se = StubExchanges.buildExchange(requestBuilder.commonAttributes.method,
+      requestBuilder.url,
+      responseStatus,
+      responseBody,
+      responseContentType)
 
-    actor(new HttpRequestAction(httpRequest, next))
+    val tearDown = actor(new TearDown(requestBuilder.simulation, requestBuilder.requestName, next))
+    val request = actor(new HttpRequestAction(httpRequest, tearDown))
+    val spinUp = actor(new SpinUp(requestBuilder.simulation, requestBuilder.requestName, se, request))
+
     spinUp
   }
 }
 
-class SpinUp(msg: String, val next: ActorRef) extends Chainable {
+class SpinUp(val simulation: DynamicStubExchange, val requestName: String, val se: StubExchange, val next: ActorRef) extends Chainable {
 
   def execute(session: Session): Unit = {
 
-    println(s"spinning up $msg for scenario: ${session.scenarioName}")
+    println(s"spinning up auto-response to $requestName for scenario: ${session.scenarioName}")
+    simulation.addExchange(requestName, se)
     next ! session
   }
 }
 
-class TearDown(msg: String, val next: ActorRef) extends Chainable {
+class TearDown(val simulation: DynamicStubExchange, val requestName: String, val next: ActorRef) extends Chainable {
 
   def execute(session: Session): Unit = {
-    println(s"tearing down $msg for scenario: ${session.scenarioName}")
+    println(s"tearing down $requestName after scenario: ${session.scenarioName}")
+    simulation.removeExchange(requestName)
     next ! session
   }
 }
