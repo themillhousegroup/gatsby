@@ -49,14 +49,16 @@ class GatsbyHttpRequestWithParamsWrapper(commonAttributes: CommonAttributes,
 }
 
 object GatsbyHttpRequestActionBuilder {
-  def withStubby(requestBuilder: AbstractHttpRequestBuilder[_]) = {
+  def withStubby(requestBuilder: GatsbyHttpRequestWrapper) = {
     new GatsbyHttpRequestActionBuilder(requestBuilder)
   }
 }
 
-class GatsbyHttpRequestActionBuilder(requestBuilder: AbstractHttpRequestBuilder[_]) extends HttpActionBuilder {
+class GatsbyHttpRequestActionBuilder(requestBuilder: GatsbyHttpRequestWrapper) extends HttpActionBuilder {
 
   private val logger = LoggerFactory.getLogger(getClass)
+
+  requestBuilder.
 
   logger.info("GatsbyHttpRequestActionBuilder constructed")
 
@@ -69,7 +71,7 @@ class GatsbyHttpRequestActionBuilder(requestBuilder: AbstractHttpRequestBuilder[
     val request = actor(new HttpRequestAction(httpRequest, tearDown))
     val spinUp = actor(new SpinUp("blurgh", request))
 
-    //actor(new HttpRequestAction(httpRequest, next))
+    actor(new HttpRequestAction(httpRequest, next))
     spinUp
   }
 }
@@ -79,6 +81,7 @@ class SpinUp(msg: String, val next: ActorRef) extends Chainable {
   def execute(session: Session): Unit = {
 
     println(s"spinning up $msg for scenario: ${session.scenarioName}")
+    next ! session
   }
 }
 
@@ -86,5 +89,6 @@ class TearDown(msg: String, val next: ActorRef) extends Chainable {
 
   def execute(session: Session): Unit = {
     println(s"tearing down $msg for scenario: ${session.scenarioName}")
+    next ! session
   }
 }

@@ -16,8 +16,7 @@ object GatsbyHttp {
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
-  def gatsbyHttp(requestName: String)(implicit simulation: DynamicStubExchange) = {
-    logger.info(s"Using Gatsby to generate responses for ${simulation.getClass.getSimpleName}")
+  def gatsbyHttp(requestName: String)(implicit simulation: DynamicStubExchange) = { 
     new GatsbyHttp(requestName, requestName, simulation)
   }
 
