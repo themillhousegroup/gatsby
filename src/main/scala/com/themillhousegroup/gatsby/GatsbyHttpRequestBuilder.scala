@@ -43,12 +43,6 @@ class GatsbyHttpRequestWithParamsWrapper(commonAttributes: CommonAttributes,
   httpAttributes: HttpAttributes,
   formParams: List[HttpParam])(onBuild: => Unit)
     extends HttpRequestWithParamsBuilder(commonAttributes, httpAttributes, formParams) {
-
-  override def build(protocol: HttpProtocol, throttled: Boolean): HttpRequestDef = {
-    logger.info("Building NOW!")
-    onBuild
-    super.build(protocol, throttled)
-  }
 }
 
 object GatsbyHttpActionBuilder {

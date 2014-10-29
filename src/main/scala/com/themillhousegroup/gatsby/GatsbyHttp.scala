@@ -32,9 +32,7 @@ object GatsbyHttp {
  * you're indicating that you'd like Gatsby to set
  * up Stubby endpoints for each one.
  */
-class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends AbstractGatsbyHttp(requestName, requestNameExp, simulation) {
-
-  private[this] val logger = LoggerFactory.getLogger(getClass)
+class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends AbstractGatsbyHttp(requestName, requestNameExp, simulation) with HasLogger {
 
   /** The Stubby endpoint will return an empty 200 OK */
   def get(url: ExpressionAndPlainString) = httpRequest("GET", url)

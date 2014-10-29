@@ -2,13 +2,10 @@ package com.themillhousegroup.gatsby
 
 import io.gatling.core.session._
 import io.gatling.http.request.builder._
-import org.slf4j.LoggerFactory
 import io.gatling.http.request.builder.HttpAttributes
 import com.themillhousegroup.gatsby.StubExchanges.buildExchange
 
-abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends Http(requestNameExp) {
-
-  private[this] val logger = LoggerFactory.getLogger(getClass)
+abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends Http(requestNameExp) with HasLogger {
 
   def httpRequest(method: String, url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttpRequestBuilder = {
     logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
