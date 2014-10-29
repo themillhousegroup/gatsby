@@ -10,10 +10,10 @@ abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expressio
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
-  def httpRequest(method: String, url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttpRequestWrapper = {
+  def httpRequest(method: String, url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttpRequestBuilder = {
     logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
 
-    new GatsbyHttpRequestWrapper(CommonAttributes(requestNameExp, method, Left(url.exp)), HttpAttributes(), url.plain, requestName, simulation)
+    new GatsbyHttpRequestBuilder(CommonAttributes(requestNameExp, method, Left(url.exp)), HttpAttributes(), url.plain, requestName, simulation)
   }
 
   def httpRequestWithParams(method: String,

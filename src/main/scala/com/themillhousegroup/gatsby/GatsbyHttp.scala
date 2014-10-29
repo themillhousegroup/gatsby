@@ -2,7 +2,6 @@ package com.themillhousegroup.gatsby
 
 import org.slf4j.LoggerFactory
 import io.gatling.http.request.builder.{ HttpParam, HttpAttributes }
-import com.dividezero.stubby.core.model.StubExchange
 import io.gatling.http.check.HttpCheck
 import io.gatling.http.check.HttpCheckScope.Status
 import io.gatling.http.response.Response
@@ -14,9 +13,12 @@ import io.gatling.core.Predef._
 
 object GatsbyHttp {
 
-  private[this] val logger = LoggerFactory.getLogger(getClass)
+  /**
+   * Replace usages of io.gatling.http.Predef.http in your simulation files
+   * with this one to get Gatsby functionality.
+   */
 
-  def gatsbyHttp(requestName: String)(implicit simulation: DynamicStubExchange) = {
+  def http(requestName: String)(implicit simulation: DynamicStubExchange) = {
     new GatsbyHttp(requestName, requestName, simulation)
   }
 

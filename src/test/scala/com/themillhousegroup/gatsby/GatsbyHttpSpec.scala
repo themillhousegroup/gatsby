@@ -1,7 +1,7 @@
 package com.themillhousegroup.gatsby
 
 import org.specs2.mutable.Specification
-import com.themillhousegroup.gatsby.GatsbyHttp.gatsbyHttp
+import com.themillhousegroup.gatsby.GatsbyHttp.http
 import org.specs2.mock.Mockito
 import io.gatling.core.Predef.stringToExpression
 import com.themillhousegroup.gatsby.GatsbyImplicits.s2eps
@@ -16,7 +16,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
 
       implicit val mockStubbyBackend = mock[DynamicStubExchange]
 
-      gatsbyHttp("requestName").get("/foo")
+      http("requestName").get("/foo")
 
       there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"), any[StubExchange])
     }
@@ -25,7 +25,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
 
       implicit val mockStubbyBackend = mock[DynamicStubExchange]
 
-      gatsbyHttp("requestName").post("/foo")
+      http("requestName").post("/foo")
 
       there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"), any[StubExchange])
     }
@@ -38,7 +38,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
 
       val body = """ { "json" : true } """
 
-      gatsbyHttp("requestName").post("/foo", HttpAttributes(body = Some(StringBody(body))), Nil)
+      http("requestName").post("/foo", HttpAttributes(body = Some(StringBody(body))), Nil)
 
       there was one(mockStubbyBackend).addExchange(org.mockito.Matchers.eq("requestName"), any[StubExchange])
     }

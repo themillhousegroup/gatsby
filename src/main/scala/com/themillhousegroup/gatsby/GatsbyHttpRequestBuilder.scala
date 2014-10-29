@@ -26,15 +26,15 @@ import io.gatling.core.action.Chainable
 import com.dividezero.stubby.core.model.StubExchange
 import io.gatling.core.validation.Validation
 
-class GatsbyHttpRequestWrapper(commonAttributes: CommonAttributes,
+class GatsbyHttpRequestBuilder(commonAttributes: CommonAttributes,
     httpAttributes: HttpAttributes,
     val url: String,
     val requestName: String,
-    val simulation: DynamicStubExchange) extends AbstractHttpRequestBuilder[GatsbyHttpRequestWrapper](commonAttributes, httpAttributes) {
+    val simulation: DynamicStubExchange) extends AbstractHttpRequestBuilder[GatsbyHttpRequestBuilder](commonAttributes, httpAttributes) {
 
-  def newInstance(commonAttributes: CommonAttributes): GatsbyHttpRequestWrapper = new GatsbyHttpRequestWrapper(commonAttributes, httpAttributes, url, requestName, simulation)
+  def newInstance(commonAttributes: CommonAttributes): GatsbyHttpRequestBuilder = new GatsbyHttpRequestBuilder(commonAttributes, httpAttributes, url, requestName, simulation)
 
-  def newInstance(httpAttributes: HttpAttributes): GatsbyHttpRequestWrapper = new GatsbyHttpRequestWrapper(commonAttributes, httpAttributes, url, requestName, simulation)
+  def newInstance(httpAttributes: HttpAttributes): GatsbyHttpRequestBuilder = new GatsbyHttpRequestBuilder(commonAttributes, httpAttributes, url, requestName, simulation)
 
   def request(protocol: HttpProtocol): Expression[Request] = new HttpRequestExpressionBuilder(commonAttributes, httpAttributes, protocol).build
 }
@@ -54,15 +54,15 @@ class GatsbyHttpRequestWithParamsWrapper(commonAttributes: CommonAttributes,
 object GatsbyHttpRequestActionBuilder {
 
   /** If you just want the given request to be responded-to with a simple 200 OK with empty body and no Content-Type, this is your method */
-  def withStubby(requestBuilder: GatsbyHttpRequestWrapper): GatsbyHttpRequestActionBuilder = withStubby()(requestBuilder)
+  def withStubby(requestBuilder: GatsbyHttpRequestBuilder): GatsbyHttpRequestActionBuilder = withStubby()(requestBuilder)
 
   /** Supplying extra details about how Stubby should respond */
-  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: GatsbyHttpRequestWrapper): GatsbyHttpRequestActionBuilder = {
+  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: GatsbyHttpRequestBuilder): GatsbyHttpRequestActionBuilder = {
     new GatsbyHttpRequestActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType)
   }
 }
 
-class GatsbyHttpRequestActionBuilder(requestBuilder: GatsbyHttpRequestWrapper,
+class GatsbyHttpRequestActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
     responseStatus: Int = 200,
     responseBody: Option[AnyRef] = None,
     responseContentType: Option[String]) extends HttpActionBuilder {

@@ -2,7 +2,7 @@ package gatsbyexamples
 
 import io.gatling.core.Predef._
 import com.themillhousegroup.gatsby.GatsbySimulation
-import com.themillhousegroup.gatsby.GatsbyHttp.gatsbyHttp
+import com.themillhousegroup.gatsby.GatsbyHttp.http
 import com.dividezero.stubby.core.model.{StubResponse, StubRequest, StubExchange}
 import io.gatling.http.Predef._
 
@@ -20,11 +20,11 @@ class FilteringSimulation extends GatsbySimulation(9999) {
   val httpConf = http.baseURL("http://localhost:8888")
 
   val scn1 = scenario("AllowedPage")
-    .exec(gatsbyHttp("allowed-req-1").get("/public"))
+    .exec(http("allowed-req-1").get("/public"))
     .pause(1)
 
   val scn2 = scenario("BlockedPage")
-    .exec(gatsbyHttp("blocked-req-1")
+    .exec(http("blocked-req-1")
     .get("/secret")
     .check(status.is(403))
   )

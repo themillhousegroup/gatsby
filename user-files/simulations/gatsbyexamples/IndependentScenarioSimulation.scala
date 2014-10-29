@@ -19,7 +19,7 @@ class IndependentScenarioSimulation extends GatsbySimulation(9999) {
   val scn1 = scenario("IndependentScenarioSimulation1")
     .exec(
       withStubby(
-      gatsbyHttp("request_1")
+      http("request_1")
         .get("/first", 200)
         .check(status.is(200)))
     )
@@ -29,7 +29,7 @@ class IndependentScenarioSimulation extends GatsbySimulation(9999) {
   val scn2 = scenario("IndependentScenarioSimulation2")
     .exec(
       withStubby(404)(
-        gatsbyHttp("request_2")
+        http("request_2")
           .get("/first")
           .check(status.is(404)))
     )
