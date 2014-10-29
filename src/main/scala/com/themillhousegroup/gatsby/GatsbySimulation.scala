@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 case class ExpressionAndPlainString(exp: Expression[String], plain: String)
 
 trait HasLogger {
-  val logger = LoggerFactory.getLogger(getClass)
+  lazy val logger = LoggerFactory.getLogger(getClass)
 }
 
 trait HasStubbyServer {
@@ -33,21 +33,21 @@ trait EnforcesMutualExclusion {
 
   import scala.concurrent.ExecutionContext.Implicits.global
   def acquireLock(taskName: String): Future[Boolean] = {
-    logger.debug(s"acquireLock for $taskName on token $this")
+    logger.debug(s"acquireLock entered for $taskName")
     // hack impl
     Future {
       while (!token.compareAndSet(false, true)) {
-        logger.debug(s"Awaiting lock for $taskName on token $this")
+        logger.debug(s"Awaiting lock for $taskName")
         Thread.sleep(1000)
       }
 
-      logger.debug(s"** ACQUIRED Lock for $taskName on token $this **")
+      logger.debug(s"ACQUIRED Lock for $taskName")
       true
     }
   }
 
   def releaseLock(taskName: String) = {
-    logger.debug(s"Releasing lock for $taskName on token $this")
+    logger.debug(s"Releasing lock for $taskName")
     token.set(false)
   }
 }

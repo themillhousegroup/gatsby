@@ -65,14 +65,9 @@ object GatsbyHttpActionBuilder {
 class GatsbyHttpActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
     responseStatus: Int = 200,
     responseBody: Option[AnyRef] = None,
-    responseContentType: Option[String]) extends HttpActionBuilder {
-
-  private val logger = LoggerFactory.getLogger(getClass)
-
-  logger.info("GatsbyHttpRequestActionBuilder constructed")
+    responseContentType: Option[String]) extends HttpActionBuilder with HasLogger {
 
   def build(next: ActorRef, protocols: Protocols): ActorRef = {
-    logger.info("GatsbyHttpRequestActionBuilder build()")
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
     val httpRequest = requestBuilder.build(httpProtocol(protocols), throttled)
 
