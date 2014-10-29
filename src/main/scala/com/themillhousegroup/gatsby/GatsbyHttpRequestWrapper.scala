@@ -95,8 +95,11 @@ class SpinUp(val simulation: DynamicStubExchange, val requestName: String, val s
   def execute(session: Session): Unit = {
 
     println(s"spinning up auto-response to $requestName for scenario: ${session.scenarioName}")
-    simulation.addExchange(requestName, se)
-    next ! session
+    simulation.acquireLock(requestName).map { ready =>
+      simulation.addExchange(requestName, se)
+      next ! session
+    }
+
   }
 }
 
@@ -105,6 +108,7 @@ class TearDown(val simulation: DynamicStubExchange, val requestName: String, val
   def execute(session: Session): Unit = {
     println(s"tearing down $requestName after scenario: ${session.scenarioName}")
     simulation.removeExchange(requestName)
+    simulation.releaseLock(requestName)
     next ! session
   }
 }

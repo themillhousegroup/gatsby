@@ -5,8 +5,14 @@ import scala.collection.mutable
 import io.gatling.core.session._
 import io.gatling.core.Predef._
 import com.dividezero.stubby.core.model.StubExchange
+import scala.concurrent.Future
+import java.util.concurrent.atomic.AtomicBoolean
 
 case class ExpressionAndPlainString(exp: Expression[String], plain: String)
+
+trait HasLogger {
+  val logger = LoggerFactory.getLogger(getClass)
+}
 
 trait HasStubbyServer {
   val stubbyServer: StubbyServer
@@ -20,7 +26,33 @@ trait CanRemoveStubExchanges {
   def removeExchange(prefix: String)
 }
 
-trait DynamicStubExchange extends CanAddStubExchanges with CanRemoveStubExchanges
+trait EnforcesMutualExclusion {
+  this: HasLogger =>
+
+  val token = new AtomicBoolean(false)
+
+  import scala.concurrent.ExecutionContext.Implicits.global
+  def acquireLock(taskName: String): Future[Boolean] = {
+    logger.debug(s"acquireLock for $taskName on token $this")
+    // hack impl
+    Future {
+      while (!token.compareAndSet(false, true)) {
+        logger.debug(s"Awaiting lock for $taskName on token $this")
+        Thread.sleep(1000)
+      }
+
+      logger.debug(s"** ACQUIRED Lock for $taskName on token $this **")
+      true
+    }
+  }
+
+  def releaseLock(taskName: String) = {
+    logger.debug(s"Releasing lock for $taskName on token $this")
+    token.set(false)
+  }
+}
+
+trait DynamicStubExchange extends CanAddStubExchanges with CanRemoveStubExchanges with EnforcesMutualExclusion with HasLogger
 
 object GatsbyImplicits extends GatsbyImplicitsTrait {
 }
@@ -39,9 +71,8 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     with HasStubbyServer
     with DynamicStubExchange
     with GatsbyAssertionSupport
-    with GatsbyImplicitsTrait {
-
-  private val logger = LoggerFactory.getLogger(getClass)
+    with GatsbyImplicitsTrait
+    with HasLogger {
 
   val stubbyServer: StubbyServer
 
