@@ -3,6 +3,7 @@ package com.themillhousegroup.gatsby
 import org.specs2.mutable.Specification
 import com.dividezero.stubby.core.model.StubExchange
 import org.specs2.mock.Mockito
+import com.themillhousegroup.gatsby.stubby.StubbyServer
 
 class GatsbySimulationSpec extends Specification with Mockito {
 

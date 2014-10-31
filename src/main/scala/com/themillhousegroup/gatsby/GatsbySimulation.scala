@@ -7,6 +7,8 @@ import io.gatling.core.Predef._
 import com.dividezero.stubby.core.model.StubExchange
 import scala.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
+import com.themillhousegroup.gatsby.assertions.GatsbyAssertionSupport
+import com.themillhousegroup.gatsby.stubby.{ StubbyServer, TameStubby }
 
 case class ExpressionAndPlainString(exp: Expression[String], plain: String)
 

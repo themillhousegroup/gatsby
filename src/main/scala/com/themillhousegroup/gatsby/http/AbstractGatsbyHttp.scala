@@ -3,8 +3,9 @@ package com.themillhousegroup.gatsby.http
 import io.gatling.core.session._
 import io.gatling.http.request.builder._
 import io.gatling.http.request.builder.HttpAttributes
-import com.themillhousegroup.gatsby.StubExchanges.buildExchange
-import com.themillhousegroup.gatsby.{GatsbyHttpRequestBuilder, ExpressionAndPlainString, HasLogger, DynamicStubExchange}
+import com.themillhousegroup.gatsby.stubby.StubExchanges
+import StubExchanges.buildExchange
+import com.themillhousegroup.gatsby.{ ExpressionAndPlainString, HasLogger, DynamicStubExchange }
 
 abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends Http(requestNameExp) with HasLogger {
 

@@ -3,6 +3,7 @@ package com.themillhousegroup.gatsby
 import io.gatling.http.request.builder.{ HttpParam, HttpAttributes }
 import io.gatling.core.session._
 import io.gatling.core.Predef._
+import com.themillhousegroup.gatsby.http.AbstractGatsbyHttp
 
 object GatsbyHttp {
 
