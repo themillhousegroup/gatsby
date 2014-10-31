@@ -1,4 +1,4 @@
-package com.themillhousegroup.gatsby
+package com.themillhousegroup.gatsby.stubby
 
 import unfiltered.netty.Http
 import com.dividezero.stubby.standalone.{ Main, AppPlan, Server }

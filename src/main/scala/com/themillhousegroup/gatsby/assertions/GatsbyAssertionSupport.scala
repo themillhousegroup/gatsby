@@ -1,10 +1,11 @@
-package com.themillhousegroup.gatsby
+package com.themillhousegroup.gatsby.assertions
 
 import io.gatling.core.assertion.Metric
 import io.gatling.core.result.reader.DataReader
 import io.gatling.core.validation.Success
 import org.slf4j.LoggerFactory
 import com.dividezero.stubby.core.model.StubRequest
+import com.themillhousegroup.gatsby.HasStubbyServer
 
 trait GatsbyAssertionSupport {
   this: HasStubbyServer =>
