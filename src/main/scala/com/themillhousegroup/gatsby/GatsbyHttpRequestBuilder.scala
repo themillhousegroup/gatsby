@@ -11,7 +11,7 @@ import io.gatling.http.request.builder.HttpAttributes
 import io.gatling.core.controller.throttle.ThrottlingProtocol
 import io.gatling.http.request.builder.CommonAttributes
 import com.ning.http.client.Request
-import com.themillhousegroup.gatsby.actors.{TearDown, SpinUp}
+import com.themillhousegroup.gatsby.actors.{ TearDown, SpinUp }
 
 class GatsbyHttpRequestBuilder(commonAttributes: CommonAttributes,
     httpAttributes: HttpAttributes,
@@ -66,7 +66,4 @@ class GatsbyHttpActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
     spinUp
   }
 }
-
-
-
 
