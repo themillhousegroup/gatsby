@@ -36,9 +36,9 @@ class GatsbyHttpActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
       responseContentType)
 
     // Build the chain of 3 actors that configure Stubby, fire the request, and de-configure Stubby:
-    val tearDown = actor(new TearDown(requestBuilder.simulation, requestBuilder.requestName, next))
+    val tearDown = actor(new TearDown(requestBuilder.simulation, requestBuilder.commonAttributes.requestName, next))
     val request = actor(new HttpRequestAction(httpRequest, tearDown))
-    val spinUp = actor(new SpinUp(requestBuilder.simulation, requestBuilder.requestName, se, request))
+    val spinUp = actor(new SpinUp(requestBuilder.simulation, requestBuilder.commonAttributes.requestName, se, request))
 
     spinUp
   }
