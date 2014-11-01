@@ -4,6 +4,7 @@ import unfiltered.netty.Http
 import com.dividezero.stubby.standalone.{ Main, AppPlan, Server }
 import java.io.File
 import com.dividezero.stubby.core.model.{ StubParam, StubResponse, StubRequest, StubExchange }
+import io.gatling.core.session.{ Session, Expression }
 
 trait StubbyServer {
   def start(port: Int)
@@ -46,5 +47,13 @@ object StubExchanges {
     StubExchange(
       StubRequest(Some(method), Some(url), Nil, Nil, None),
       StubResponse(responseStatus, responseContentType.map(StubParam("Content-Type", _)).toList, responseBody))
+  }
+
+  def buildExchangeExpression(method: String,
+    url: Expression[String],
+    responseStatus: Int = 200,
+    responseBody: Option[AnyRef] = None,
+    responseContentType: Option[String] = None): Expression[StubExchange] = {
+    url(_).map(u => buildExchange(method, u, responseStatus, responseBody, responseContentType))
   }
 }

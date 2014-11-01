@@ -1,7 +1,6 @@
 package gatsbyexamples
 
 import io.gatling.core.Predef._
-import com.themillhousegroup.gatsby.GatsbyHttp._
 import com.themillhousegroup.gatsby.GatsbyHttpActionBuilder._
 import com.themillhousegroup.gatsby.GatsbySimulation
 import io.gatling.http.Predef._
@@ -17,12 +16,12 @@ class IndependentScenarioSimulation extends GatsbySimulation(9999) {
     .baseURL("http://localhost:9999")
 
   val scn1 = scenario("IndependentScenarioSimulation1")
-    .exec(withStubby(gatsbyHttp("request_1").get("/first").check(status.is(200))))
+    .exec(withStubby(http("request_1").get("/first").check(status.is(200))))
     .pause(1)
 
 
   val scn2 = scenario("IndependentScenarioSimulation2")
-    .exec(withStubby(404)(gatsbyHttp("request_2").get("/first").check(status.is(404))))
+    .exec(withStubby(404)(http("request_2").get("/first").check(status.is(404))))
     .pause(1)
 
   setUp(

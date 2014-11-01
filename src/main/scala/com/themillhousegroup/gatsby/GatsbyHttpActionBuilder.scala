@@ -8,20 +8,21 @@ import io.gatling.core.controller.throttle.ThrottlingProtocol
 import com.themillhousegroup.gatsby.actors.{ SpinUp, TearDown }
 import com.themillhousegroup.gatsby.http.GatsbyHttpRequestBuilder
 import com.themillhousegroup.gatsby.stubby.StubExchanges
+import io.gatling.http.request.builder.HttpRequestBuilder
 
 object GatsbyHttpActionBuilder {
 
   /** If you just want the given request to be responded-to with a simple 200 OK with empty body and no Content-Type, this is your method */
-  def withStubby(requestBuilder: GatsbyHttpRequestBuilder)(implicit simulation: DynamicStubExchange): GatsbyHttpActionBuilder = withStubby()(requestBuilder)(simulation)
+  def withStubby(requestBuilder: HttpRequestBuilder)(implicit simulation: DynamicStubExchange): GatsbyHttpActionBuilder = withStubby()(requestBuilder)(simulation)
 
   /** Supplying extra details about how Stubby should respond */
-  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: GatsbyHttpRequestBuilder)(implicit simulation: DynamicStubExchange): GatsbyHttpActionBuilder = {
+  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: HttpRequestBuilder)(implicit simulation: DynamicStubExchange): GatsbyHttpActionBuilder = {
     new GatsbyHttpActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType, simulation)
   }
 }
 
 class GatsbyHttpActionBuilder(
-    requestBuilder: GatsbyHttpRequestBuilder,
+    requestBuilder: HttpRequestBuilder,
     responseStatus: Int = 200,
     responseBody: Option[AnyRef] = None,
     responseContentType: Option[String],
@@ -31,8 +32,8 @@ class GatsbyHttpActionBuilder(
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
     val httpRequest = requestBuilder.build(httpProtocol(protocols), throttled)
 
-    val se = StubExchanges.buildExchange(requestBuilder.commonAttributes.method,
-      requestBuilder.url,
+    val se = StubExchanges.buildExchangeExpression(requestBuilder.commonAttributes.method,
+      requestBuilder.commonAttributes.urlOrURI.left.get,
       responseStatus,
       responseBody,
       responseContentType)

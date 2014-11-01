@@ -1,18 +1,7 @@
 package com.themillhousegroup.gatsby
 
 import org.specs2.mutable.Specification
-import com.themillhousegroup.gatsby.GatsbyHttp.gatsbyHttp
-import com.themillhousegroup.gatsby.GatsbyHttpActionBuilder.withStubby
 import org.specs2.mock.Mockito
-import io.gatling.core.Predef.stringToExpression
-import com.themillhousegroup.gatsby.GatsbyImplicits.s2eps
-import com.dividezero.stubby.core.model.StubExchange
-import io.gatling.http.request.builder.HttpAttributes
-import io.gatling.http.request.StringBody
-import io.gatling.core.config.Protocols
-import akka.actor.ActorRef
-import io.gatling.core.session.Session
-import io.gatling.http.config.HttpProtocol
 
 class GatsbyHttpSpec extends Specification with Mockito {
 
