@@ -12,8 +12,8 @@ object GatsbyHttp {
    * with this one to get Gatsby functionality.
    */
 
-  def gatsbyHttp(requestName: String)(implicit simulation: DynamicStubExchange) = {
-    new GatsbyHttp(requestName, requestName, simulation)
+  def gatsbyHttp(requestName: String) = {
+    new GatsbyHttp(requestName, requestName)
   }
 
   val applicationJson = Some("application/json")
@@ -26,7 +26,7 @@ object GatsbyHttp {
  * but using the ExpressionAndPlainString container so we can resolve values *before*
  * the simulation is actually run.
  */
-class GatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends AbstractGatsbyHttp(requestName, requestNameExp, simulation) with HasLogger {
+class GatsbyHttp(requestName: String, requestNameExp: Expression[String]) extends AbstractGatsbyHttp(requestName, requestNameExp) with HasLogger {
 
   /** The Stubby endpoint will return an empty 200 OK */
   def get(url: ExpressionAndPlainString) = httpRequest("GET", url)

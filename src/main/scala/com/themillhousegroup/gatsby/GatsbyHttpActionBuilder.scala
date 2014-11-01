@@ -12,18 +12,20 @@ import com.themillhousegroup.gatsby.stubby.StubExchanges
 object GatsbyHttpActionBuilder {
 
   /** If you just want the given request to be responded-to with a simple 200 OK with empty body and no Content-Type, this is your method */
-  def withStubby(requestBuilder: GatsbyHttpRequestBuilder): GatsbyHttpActionBuilder = withStubby()(requestBuilder)
+  def withStubby(requestBuilder: GatsbyHttpRequestBuilder)(implicit simulation: DynamicStubExchange): GatsbyHttpActionBuilder = withStubby()(requestBuilder)(simulation)
 
   /** Supplying extra details about how Stubby should respond */
-  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: GatsbyHttpRequestBuilder): GatsbyHttpActionBuilder = {
-    new GatsbyHttpActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType)
+  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: GatsbyHttpRequestBuilder)(implicit simulation: DynamicStubExchange): GatsbyHttpActionBuilder = {
+    new GatsbyHttpActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType, simulation)
   }
 }
 
-class GatsbyHttpActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
+class GatsbyHttpActionBuilder(
+    requestBuilder: GatsbyHttpRequestBuilder,
     responseStatus: Int = 200,
     responseBody: Option[AnyRef] = None,
-    responseContentType: Option[String]) extends HttpActionBuilder with HasLogger {
+    responseContentType: Option[String],
+    simulation: DynamicStubExchange) extends HttpActionBuilder with HasLogger {
 
   def build(next: ActorRef, protocols: Protocols): ActorRef = {
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
@@ -36,9 +38,9 @@ class GatsbyHttpActionBuilder(requestBuilder: GatsbyHttpRequestBuilder,
       responseContentType)
 
     // Build the chain of 3 actors that configure Stubby, fire the request, and de-configure Stubby:
-    val tearDown = actor(new TearDown(requestBuilder.simulation, requestBuilder.commonAttributes.requestName, next))
+    val tearDown = actor(new TearDown(simulation, requestBuilder.commonAttributes.requestName, next))
     val request = actor(new HttpRequestAction(httpRequest, tearDown))
-    val spinUp = actor(new SpinUp(requestBuilder.simulation, requestBuilder.commonAttributes.requestName, se, request))
+    val spinUp = actor(new SpinUp(simulation, requestBuilder.commonAttributes.requestName, se, request))
 
     spinUp
   }

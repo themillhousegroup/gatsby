@@ -7,12 +7,12 @@ import com.themillhousegroup.gatsby.stubby.StubExchanges
 import StubExchanges.buildExchange
 import com.themillhousegroup.gatsby.{ ExpressionAndPlainString, HasLogger, DynamicStubExchange }
 
-abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expression[String], simulation: DynamicStubExchange) extends Http(requestNameExp) with HasLogger {
+abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expression[String]) extends Http(requestNameExp) with HasLogger {
 
   def httpRequest(method: String, url: ExpressionAndPlainString, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): GatsbyHttpRequestBuilder = {
     logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
 
-    new GatsbyHttpRequestBuilder(CommonAttributes(requestNameExp, method, Left(url.exp)), HttpAttributes(), url.plain, requestName, simulation)
+    new GatsbyHttpRequestBuilder(CommonAttributes(requestNameExp, method, Left(url.exp)), HttpAttributes(), url.plain, requestName)
   }
 
   def httpRequestWithParams(method: String,
@@ -20,7 +20,7 @@ abstract class AbstractGatsbyHttp(requestName: String, requestNameExp: Expressio
     httpAttributes: HttpAttributes = new HttpAttributes(),
     formParams: List[HttpParam] = Nil): HttpRequestWithParamsBuilder = {
     logger.info(s"Configuring Dynamic Gatsby HTTP response for: $method ${url.plain}")
-    simulation.addExchange(requestName, buildExchange(method, url.plain))
+    //simulation.addExchange(requestName, buildExchange(method, url.plain))
 
     // TODO: need to include CommonAttributes to allow headers to be set and/or matched.
 
