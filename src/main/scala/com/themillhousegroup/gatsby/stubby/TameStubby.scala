@@ -42,18 +42,3 @@ class TameStubby(paths: String*) extends StubbyServer {
   }
 }
 
-object StubExchanges {
-  def buildExchange(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None): StubExchange = {
-    StubExchange(
-      StubRequest(Some(method), Some(url), Nil, Nil, None),
-      StubResponse(responseStatus, responseContentType.map(StubParam("Content-Type", _)).toList, responseBody))
-  }
-
-  def buildExchangeExpression(method: String,
-    url: Expression[String],
-    responseStatus: Int = 200,
-    responseBody: Option[AnyRef] = None,
-    responseContentType: Option[String] = None): Expression[StubExchange] = {
-    url(_).map(u => buildExchange(method, u, responseStatus, responseBody, responseContentType))
-  }
-}
