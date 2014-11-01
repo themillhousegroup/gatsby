@@ -13,13 +13,13 @@ ASCII art FTW:
    	                	    	/-------------------------\
 Configure "always-  			|                         |
 there" endpoints	   	    	|   [ Gatling Generates]  |
-								|   [ HTTP Requests    ] ---------------------------\
-Configure scenarios	 			|                         |                         |
+								|   [ HTTP Requests    ] -------------------------\
+Configure scenarios	 			|                         |                       |
 to test requests are	  =>	|                         |            /------------------------\
-answered appropriately	    	|                         |            | pass/block/rewrite/etc |
-	                       		|                         |            \------------------------/
-Assert that the (Stubby)		|                         |                         |
-endpoint "saw" the right   		|    [Stubby acts as]-------------------------------/
+answered appropriately	    	|                         |          | pass/block/rewrite/etc |
+	                       		|                         |          \------------------------/
+Assert that the (Stubby)		|                         |                       |
+endpoint "saw" the right   		|    [Stubby acts as]-----------------------------/
 requests coming in    			|    [HTTP endpoint ]     |
                            		\-------------------------/
 ```
@@ -57,13 +57,18 @@ class FilteringSimulation extends GatsbySimulation(9999) {
   val httpConf = http.baseURL("http://localhost:8888")
   
   val scn1 = scenario("AllowedPage")
-    .exec(gatsbyHttp("allowed-req-1").get("/public"))
+    .exec(
+    	withStubby(
+    		http("allowed-req-1").get("/public").check(status.is(200))
+    	)
+    )
     .pause(1)
 
   val scn2 = scenario("BlockedPage")
-    .exec(gatsbyHttp("blocked-req-1")
-      .get("/secret")
-      .check(status.is(403))
+    .exec(
+    	withStubby(
+    		http("blocked-req-1").get("/secret").check(status.is(403))
+    	)
     )
     .pause(1)
 
@@ -82,8 +87,9 @@ class FilteringSimulation extends GatsbySimulation(9999) {
 
 Things to Note:
 
-  - using `com.themillhousegroup.gatsby.GatsbyHttp.gatsbyHttp` to automagically create stubby endpoints
+  - using `com.themillhousegroup.gatsby.GatsbyHttpActionBuilder.withStubby` to automagically create stubby endpoints that return `200 OK`
   - the `stubby` assertions can be used at the conclusion of the simulation, in addition to the standard `check`s during the scenario
+  - in this way, we are checking both the client experience ("they should get a `403`" ) and the server experience ("they should never see the request") in one shot
 
 #### Credits
 
