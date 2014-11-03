@@ -10,8 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import com.themillhousegroup.gatsby.assertions.GatsbyAssertionSupport
 import com.themillhousegroup.gatsby.stubby.{ StubbyServer, TameStubby }
 
-case class ExpressionAndPlainString(exp: Expression[String], plain: String)
-
 trait HasLogger {
   lazy val logger = LoggerFactory.getLogger(getClass)
 }
@@ -56,13 +54,6 @@ trait EnforcesMutualExclusion {
 
 trait DynamicStubExchange extends CanAddStubExchanges with CanRemoveStubExchanges with EnforcesMutualExclusion with HasLogger
 
-object GatsbyImplicits extends GatsbyImplicitsTrait {
-}
-
-trait GatsbyImplicitsTrait {
-  implicit def s2eps(s: String) = ExpressionAndPlainString(stringToExpression(s), s)
-}
-
 /**
  * A Gatling Simulation that automagically spins up
  * "the thing at the back" so that we can actually test
@@ -73,7 +64,6 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     with HasStubbyServer
     with DynamicStubExchange
     with GatsbyAssertionSupport
-    with GatsbyImplicitsTrait
     with HasLogger {
 
   val stubbyServer: StubbyServer
