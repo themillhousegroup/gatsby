@@ -10,7 +10,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
   //  "GatsbyHTTP" should {
   //    "Allow a GET to be defined, that results in Stubby getting configured" in {
   //
-  //      implicit val mockStubbyBackend = mock[DynamicStubExchange]
+  //      implicit val mockStubbyBackend = mock[RuntimeStubbing]
   //
   //      val mockSession = mock[Session]
   //      mockSession.scenarioName returns "s1"
@@ -27,7 +27,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
   //
   //    "Allow a POST to be defined, that results in Stubby getting configured" in {
   //
-  //      implicit val mockStubbyBackend = mock[DynamicStubExchange]
+  //      implicit val mockStubbyBackend = mock[RuntimeStubbing]
   //
   //      gatsbyHttp("requestName").post("/foo")
   //
@@ -36,7 +36,7 @@ class GatsbyHttpSpec extends Specification with Mockito {
   //
   //    "Allow a POST with a body to be defined, that results in Stubby getting configured" in {
   //
-  //      implicit val mockStubbyBackend = mock[DynamicStubExchange]
+  //      implicit val mockStubbyBackend = mock[RuntimeStubbing]
   //
   //      // TODO no place to set headers yet!
   //

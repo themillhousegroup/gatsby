@@ -52,7 +52,7 @@ trait EnforcesMutualExclusion {
   }
 }
 
-trait DynamicStubExchange extends CanAddStubExchanges with CanRemoveStubExchanges with EnforcesMutualExclusion with HasLogger
+trait RuntimeStubbing extends CanAddStubExchanges with CanRemoveStubExchanges with EnforcesMutualExclusion with HasLogger
 
 /**
  * A Gatling Simulation that automagically spins up
@@ -62,7 +62,7 @@ trait DynamicStubExchange extends CanAddStubExchanges with CanRemoveStubExchange
  */
 abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     with HasStubbyServer
-    with DynamicStubExchange
+    with RuntimeStubbing
     with GatsbyAssertionSupport
     with HasLogger {
 

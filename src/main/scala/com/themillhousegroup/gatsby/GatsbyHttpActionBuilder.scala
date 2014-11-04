@@ -12,10 +12,10 @@ import io.gatling.http.request.builder.HttpRequestBuilder
 object GatsbyHttpActionBuilder {
 
   /** If you just want the given request to be responded-to with a simple 200 OK with empty body and no Content-Type, this is your method */
-  def withStubby(requestBuilder: HttpRequestBuilder)(implicit simulation: DynamicStubExchange): GatsbyHttpActionBuilder = withStubby()(requestBuilder)(simulation)
+  def withStubby(requestBuilder: HttpRequestBuilder)(implicit simulation: RuntimeStubbing): GatsbyHttpActionBuilder = withStubby()(requestBuilder)(simulation)
 
   /** Supplying extra details about how Stubby should respond */
-  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: HttpRequestBuilder)(implicit simulation: DynamicStubExchange): GatsbyHttpActionBuilder = {
+  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: HttpRequestBuilder)(implicit simulation: RuntimeStubbing): GatsbyHttpActionBuilder = {
     new GatsbyHttpActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType, simulation)
   }
 }
@@ -25,7 +25,7 @@ class GatsbyHttpActionBuilder(
     responseStatus: Int = 200,
     responseBody: Option[AnyRef] = None,
     responseContentType: Option[String],
-    simulation: DynamicStubExchange) extends HttpActionBuilder with HasLogger {
+    simulation: RuntimeStubbing) extends HttpActionBuilder with HasLogger {
 
   def build(next: ActorRef, protocols: Protocols): ActorRef = {
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
