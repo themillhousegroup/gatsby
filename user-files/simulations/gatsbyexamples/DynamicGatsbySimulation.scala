@@ -28,8 +28,15 @@ class DynamicGatsbySimulation extends GatsbySimulation(9999) {
         http("request_2").get("/second").check(status.is(200)))
     )
 
+  val scn3 = scenario("DynamicGatsbySimulation3")
+    .exec(
+      withStubby(
+        http("request_3").post("/postUrl").check(status.is(200)))
+  )
+
   setUp(
     scn1.inject(atOnceUsers(3)),
-    scn2.inject(atOnceUsers(3))
+    scn2.inject(atOnceUsers(3)),
+    scn3.inject(atOnceUsers(3))
   ).protocols(httpConf)
 }
