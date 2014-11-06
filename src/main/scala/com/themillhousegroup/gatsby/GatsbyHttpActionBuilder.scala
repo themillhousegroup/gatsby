@@ -7,21 +7,21 @@ import akka.actor.ActorDSL._
 import io.gatling.core.controller.throttle.ThrottlingProtocol
 import com.themillhousegroup.gatsby.actors.{ SpinUp, TearDown }
 import com.themillhousegroup.gatsby.stubby.StubExchanges
-import io.gatling.http.request.builder.HttpRequestBuilder
+import io.gatling.http.request.builder.AbstractHttpRequestBuilder
 
 object GatsbyHttpActionBuilder {
 
   /** If you just want the given request to be responded-to with a simple 200 OK with empty body and no Content-Type, this is your method */
-  def withStubby(requestBuilder: HttpRequestBuilder)(implicit simulation: RuntimeStubbing): GatsbyHttpActionBuilder = withStubby()(requestBuilder)(simulation)
+  def withStubby(requestBuilder: AbstractHttpRequestBuilder[_])(implicit simulation: RuntimeStubbing): GatsbyHttpActionBuilder = withStubby()(requestBuilder)(simulation)
 
   /** Supplying extra details about how Stubby should respond */
-  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: HttpRequestBuilder)(implicit simulation: RuntimeStubbing): GatsbyHttpActionBuilder = {
+  def withStubby(responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None)(requestBuilder: AbstractHttpRequestBuilder[_])(implicit simulation: RuntimeStubbing): GatsbyHttpActionBuilder = {
     new GatsbyHttpActionBuilder(requestBuilder, responseStatus, responseBody, responseContentType, simulation)
   }
 }
 
 class GatsbyHttpActionBuilder(
-    requestBuilder: HttpRequestBuilder,
+    requestBuilder: AbstractHttpRequestBuilder[_],
     responseStatus: Int = 200,
     responseBody: Option[AnyRef] = None,
     responseContentType: Option[String],
