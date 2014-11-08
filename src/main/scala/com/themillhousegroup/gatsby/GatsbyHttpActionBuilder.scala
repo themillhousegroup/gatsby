@@ -6,7 +6,7 @@ import io.gatling.core.config.Protocols
 import akka.actor.ActorDSL._
 import io.gatling.core.controller.throttle.ThrottlingProtocol
 import com.themillhousegroup.gatsby.actors.{ SpinUp, TearDown }
-import com.themillhousegroup.gatsby.stubby.StubExchanges
+import com.themillhousegroup.gatsby.stubby.{ HasLogger, RuntimeStubbing, StubExchanges }
 import io.gatling.http.request.builder.AbstractHttpRequestBuilder
 
 object GatsbyHttpActionBuilder {

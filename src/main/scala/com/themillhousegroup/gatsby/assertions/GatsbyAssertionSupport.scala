@@ -5,8 +5,7 @@ import io.gatling.core.result.reader.DataReader
 import io.gatling.core.validation.Success
 import org.slf4j.LoggerFactory
 import com.dividezero.stubby.core.model.StubRequest
-import com.themillhousegroup.gatsby.{ HasStubbyServer }
-import com.themillhousegroup.gatsby.stubby.StubbyServer
+import com.themillhousegroup.gatsby.stubby.{ HasStubbyServer, StubbyServer }
 
 trait GatsbyAssertionSupport {
   this: HasStubbyServer =>

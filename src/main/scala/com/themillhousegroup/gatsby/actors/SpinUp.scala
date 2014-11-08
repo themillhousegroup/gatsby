@@ -1,10 +1,10 @@
 package com.themillhousegroup.gatsby.actors
 
-import com.themillhousegroup.gatsby.{ HasLogger, RuntimeStubbing }
 import com.dividezero.stubby.core.model.StubExchange
 import akka.actor.ActorRef
 import io.gatling.core.action.Chainable
 import io.gatling.core.session.{ Expression, Session }
+import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
 
 class SpinUp(val simulation: RuntimeStubbing, val requestNameExp: Expression[String], val se: Expression[StubExchange], val next: ActorRef) extends Chainable {
 
