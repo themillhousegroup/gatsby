@@ -5,6 +5,7 @@ import com.dividezero.stubby.standalone.{ Main, AppPlan, Server }
 import java.io.File
 import com.dividezero.stubby.core.model.{ StubParam, StubResponse, StubRequest, StubExchange }
 import io.gatling.core.session.{ Session, Expression }
+import com.dividezero.stubby.core.service.model.StubServiceExchange
 
 trait StubbyServer {
   def start(port: Int)
@@ -12,6 +13,7 @@ trait StubbyServer {
   def addExchange(exch: StubExchange)
   def removeExchange(exch: StubExchange)
   def requestsSeen: Seq[StubRequest]
+  def exchangesSeen: Seq[StubExchange]
 }
 
 /** This is ripped from stubby-standalone's Main object */
@@ -39,6 +41,10 @@ class TameStubby(paths: String*) extends StubbyServer {
 
   def requestsSeen = {
     server.service.requests.toSeq
+  }
+
+  def exchangesSeen = {
+    server.service.responses.map(_.exchange).toSeq
   }
 }
 
