@@ -6,6 +6,8 @@ import java.io.File
 import com.dividezero.stubby.core.model.{ StubParam, StubResponse, StubRequest, StubExchange }
 import io.gatling.core.session.{ Session, Expression }
 import com.dividezero.stubby.core.service.model.StubServiceExchange
+import scala.concurrent.{ Promise, Future }
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait StubbyServer {
   def start(port: Int)
@@ -18,17 +20,18 @@ trait StubbyServer {
 
 /** This is ripped from stubby-standalone's Main object */
 class TameStubby(paths: String*) extends StubbyServer {
-  var http: Option[Http] = None
+  private[this] val httpPromise = Promise[Http]
+  val http: Future[Http] = httpPromise.future
 
   val server = new Server(paths.flatMap { n: String => Main.loadFolder(n) })
 
   def start(port: Int) = {
-    http = Some(Http(port).plan(new AppPlan(server)).beforeStop({ server.fileSource.monitor.stop() }))
-    http.get.start()
+    httpPromise.success(Http(port).plan(new AppPlan(server)).beforeStop({ server.fileSource.monitor.stop() }))
+    http.foreach(_.start)
   }
 
   def stop = {
-    http.get.stop()
+    http.foreach(_.stop)
   }
 
   def addExchange(exch: StubExchange) = {
