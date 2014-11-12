@@ -3,7 +3,7 @@ import NativePackagerKeys._
 
 name := "gatsby"
 
-version := "0.1.0"
+version := s"${sys.props.getOrElse("build.majorMinor", "0.1")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
 
 scalaVersion := "2.10.4"
 
@@ -23,10 +23,6 @@ resolvers ++= Seq(  "oss-snapshots" at "https://oss.sonatype.org/content/reposit
                     "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
 
 jacoco.settings
-
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
-
-publishTo := Some("Cloudbees releases" at "https://repository-themillhousegroup.forge.cloudbees.com/"+ "release")
 
 scalariformSettings
 
