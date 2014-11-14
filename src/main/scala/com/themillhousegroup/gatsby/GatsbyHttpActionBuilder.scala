@@ -22,9 +22,9 @@ object GatsbyHttpActionBuilder {
 
 class GatsbyHttpActionBuilder(
     requestBuilder: AbstractHttpRequestBuilder[_],
-    responseStatus: Int = 200,
-    responseBody: Option[AnyRef] = None,
-    responseContentType: Option[String],
+    val responseStatus: Int,
+    val responseBody: Option[AnyRef],
+    val responseContentType: Option[String],
     simulation: RuntimeStubbing) extends HttpActionBuilder with HasLogger {
 
   def build(next: ActorRef, protocols: Protocols): ActorRef = {

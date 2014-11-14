@@ -2,10 +2,7 @@ package com.themillhousegroup.gatsby.stubby
 
 import unfiltered.netty.Http
 import com.dividezero.stubby.standalone.{ Main, AppPlan, Server }
-import java.io.File
-import com.dividezero.stubby.core.model.{ StubParam, StubResponse, StubRequest, StubExchange }
-import io.gatling.core.session.{ Session, Expression }
-import com.dividezero.stubby.core.service.model.StubServiceExchange
+import com.dividezero.stubby.core.model.{ StubRequest, StubExchange }
 import scala.concurrent.{ Promise, Future }
 import scala.concurrent.ExecutionContext.Implicits.global
 
