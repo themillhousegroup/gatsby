@@ -14,11 +14,17 @@ trait HasStubbyServer {
 }
 
 trait CanAddStubExchanges {
-  def addExchange(requestName: String, se: StubExchange)
+  /**
+   * @return true if the exchange was added
+   */
+  def addExchange(requestName: String, se: StubExchange): Boolean
 }
 
 trait CanRemoveStubExchanges {
-  def removeExchange(prefix: String)
+  /**
+   * @return true at least one exchange was removed
+   */
+  def removeExchange(prefix: String): Boolean
 }
 
 trait EnforcesMutualExclusion {

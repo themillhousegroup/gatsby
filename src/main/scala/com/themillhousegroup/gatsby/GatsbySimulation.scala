@@ -30,14 +30,19 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
 
   val scenarioExchanges = mutable.Map[String, StubExchange]()
 
-  def addExchange(requestName: String, se: StubExchange) = {
+  def addExchange(requestName: String, se: StubExchange): Boolean = {
+    val added = !scenarioExchanges.keySet.contains(requestName)
     scenarioExchanges += (requestName -> se)
     logger.info(s"Adding scenario ($requestName) exchange: ${se.request.method.get} ${se.request.path.get}")
     stubbyServer.addExchange(se)
+    added
   }
 
-  def removeExchange(prefix: String) = {
+  def removeExchange(prefix: String): Boolean = {
     logger.info(s"Removing scenario exchange for prefix: $prefix")
+
+    val initialLength = scenarioExchanges.size
+
     scenarioExchanges.filter {
       case (k, _) => k.startsWith(prefix)
     }.foreach {
@@ -48,6 +53,7 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
       }
     }
 
+    scenarioExchanges.size < initialLength
   }
 
   before {
