@@ -5,12 +5,16 @@ import org.specs2.mock.Mockito
 import io.gatling.core.session.{ Session, Expression }
 import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
 import com.dividezero.stubby.core.model.StubExchange
-import akka.actor.ActorRef
-import scala.concurrent.Future
+import akka.actor.{ Actor, ActorSystem, ScalaActorRef, ActorRef }
+import scala.concurrent.{ Await, Promise, Future }
 import io.gatling.core.validation.Success
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import akka.testkit.{ TestProbe, TestActorRef }
+import scala.concurrent.duration.Duration
 
 class SpinUpSpec extends Specification with Mockito {
+
+  val waitTime = Duration(5, "seconds")
 
   class TestSpinUp(val simulation: RuntimeStubbing,
     val requestNameExp: Expression[String],
@@ -18,9 +22,9 @@ class SpinUpSpec extends Specification with Mockito {
     val next: ActorRef) extends CanSpinUp with StrictLogging
 
   def spinUpWith(sim: RuntimeStubbing,
+    next: ActorRef = mock[ActorRef],
     requestName: String = "request",
-    se: StubExchange = mock[StubExchange],
-    next: ActorRef = mock[ActorRef]) = {
+    se: StubExchange = mock[StubExchange]) = {
 
     val mockReq = mock[Expression[String]]
     mockReq(any[Session]) returns Success(requestName)
@@ -47,6 +51,27 @@ class SpinUpSpec extends Specification with Mockito {
 
     }
 
+    "Call the next actor in the chain" in {
+
+      implicit val system = ActorSystem.create("SpinUpSpec")
+
+      val sim = mock[RuntimeStubbing]
+      sim.acquireLock(anyString) returns Future.successful(true)
+
+      val next = TestActorRef[NextActor]
+      val su = spinUpWith(sim, next)
+
+      val session = mock[Session]
+      session.scenarioName returns "scenarioName"
+      su.execute(session)
+
+      val result = Await.result(next.underlyingActor.notified, waitTime)
+
+      system.shutdown
+
+      result must beEqualTo(session)
+    }
+
     "Await the simulation lock before adding an exchange" in {
       val sim = mock[RuntimeStubbing]
       sim.acquireLock(anyString) answers { _ =>
@@ -67,5 +92,16 @@ class SpinUpSpec extends Specification with Mockito {
 
       there was one(sim).addExchange(anyString, any[StubExchange])
     }
+  }
+}
+
+class NextActor extends Actor {
+
+  private[this] val notificationPromise = Promise[Session]
+  val notified: Future[Session] = notificationPromise.future
+
+  def receive: Actor.Receive = {
+    case s: Session => notificationPromise.success(s)
+    case x: Any => notificationPromise.failure(new IllegalArgumentException(s"Wanted a Session, got: $x"))
   }
 }
