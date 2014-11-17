@@ -45,7 +45,9 @@ class SpinUpSpec extends Specification with Mockito {
 
       val session = mock[Session]
       session.scenarioName returns "scenarioName"
-      su.execute(session)
+      Future { su.execute(session) }
+
+      Thread.sleep(2000)
 
       there was one(sim).addExchange(anyString, any[StubExchange])
 
