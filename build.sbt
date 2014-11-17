@@ -15,7 +15,8 @@ libraryDependencies ++= Seq(
     "ch.qos.logback"        %   "logback-classic"             % "1.1.2",
     "joda-time"             %   "joda-time"                   % "2.5",
     "org.mockito"           %   "mockito-all"                 % "1.9.0"       % "test",
-    "org.specs2"            %%  "specs2"                      % "2.3.12"      % "test"
+    "org.specs2"            %%  "specs2"                      % "2.3.12"      % "test",
+    "com.typesafe.akka"     %%  "akka-testkit"                % "2.3.6"       % "test"
 )
 
 resolvers ++= Seq(  "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
