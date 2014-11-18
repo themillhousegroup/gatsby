@@ -11,8 +11,11 @@ import io.gatling.core.validation.Success
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import akka.testkit.{ TestProbe, TestActorRef }
 import scala.concurrent.duration.Duration
+import com.themillhousegroup.gatsby.test.NextActor
 
 class SpinUpSpec extends Specification with Mockito {
+
+  implicit val system = ActorSystem.create("SpinUpSpec")
 
   val waitTime = Duration(5, "seconds")
 
@@ -22,7 +25,7 @@ class SpinUpSpec extends Specification with Mockito {
     val next: ActorRef) extends CanSpinUp with StrictLogging
 
   def spinUpWith(sim: RuntimeStubbing,
-    next: ActorRef = mock[ActorRef],
+    next: ActorRef = TestActorRef[NextActor],
     requestName: String = "request",
     se: StubExchange = mock[StubExchange]) = {
 
@@ -47,15 +50,11 @@ class SpinUpSpec extends Specification with Mockito {
       session.scenarioName returns "scenarioName"
       Future { su.execute(session) }
 
-      Thread.sleep(2000)
-
       there was one(sim).addExchange(anyString, any[StubExchange])
 
     }
 
     "Call the next actor in the chain" in {
-
-      implicit val system = ActorSystem.create("SpinUpSpec")
 
       val sim = mock[RuntimeStubbing]
       sim.acquireLock(anyString) returns Future.successful(true)
@@ -97,13 +96,3 @@ class SpinUpSpec extends Specification with Mockito {
   }
 }
 
-class NextActor extends Actor {
-
-  private[this] val notificationPromise = Promise[Session]
-  val notified: Future[Session] = notificationPromise.future
-
-  def receive: Actor.Receive = {
-    case s: Session => notificationPromise.success(s)
-    case x: Any => notificationPromise.failure(new IllegalArgumentException(s"Wanted a Session, got: $x"))
-  }
-}

@@ -1,7 +1,7 @@
 package com.themillhousegroup.gatsby.test
 
 import akka.actor.Actor
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ Future, Promise }
 import io.gatling.core.session.Session
 
 class NextActor extends Actor {

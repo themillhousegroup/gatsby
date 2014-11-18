@@ -4,8 +4,20 @@ import akka.actor.ActorRef
 import io.gatling.core.action.Chainable
 import io.gatling.core.session.{ Expression, Session }
 import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
+import com.dividezero.stubby.core.model.StubExchange
+import com.typesafe.scalalogging.slf4j.Logger
 
-class TearDown(val simulation: RuntimeStubbing, val requestNameExp: Expression[String], val next: ActorRef) extends Chainable {
+class TearDown(val simulation: RuntimeStubbing,
+    val requestNameExp: Expression[String],
+    val next: ActorRef) extends Chainable with CanTearDown {
+
+}
+
+trait CanTearDown {
+  val simulation: RuntimeStubbing
+  val requestNameExp: Expression[String]
+  val next: ActorRef
+  protected val logger: Logger
 
   def execute(session: Session): Unit = {
     requestNameExp(session).foreach { requestName =>
@@ -15,4 +27,5 @@ class TearDown(val simulation: RuntimeStubbing, val requestNameExp: Expression[S
       next ! session
     }
   }
+
 }
