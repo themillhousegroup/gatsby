@@ -10,12 +10,11 @@ import scala.concurrent.{ Await, Future }
 import io.gatling.core.validation.Success
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import akka.testkit.TestActorRef
-import com.themillhousegroup.gatsby.test.NextActor
+import com.themillhousegroup.gatsby.test.{ ActorScope, NextActor }
 import scala.concurrent.duration.Duration
 
 class TearDownSpec extends Specification with Mockito {
 
-  implicit val system = ActorSystem.create("TearDownSpec")
   val waitTime = Duration(5, "seconds")
 
   class TestTearDown(val simulation: RuntimeStubbing,
@@ -24,7 +23,7 @@ class TearDownSpec extends Specification with Mockito {
     val next: ActorRef) extends CanTearDown with StrictLogging
 
   def tearDownWith(sim: RuntimeStubbing,
-    next: ActorRef = TestActorRef[NextActor],
+    next: ActorRef,
     requestName: String = "request",
     se: StubExchange = mock[StubExchange]) = {
 
@@ -40,10 +39,10 @@ class TearDownSpec extends Specification with Mockito {
 
   "TearDown Actor" should {
 
-    "Remove the exchange for the request" in {
+    "Remove the exchange for the request" in new ActorScope {
       val sim = mock[RuntimeStubbing]
       sim.acquireLock(anyString) returns Future.successful(true)
-      val su = tearDownWith(sim)
+      val su = tearDownWith(sim, TestActorRef[NextActor])
 
       val session = mock[Session]
       session.scenarioName returns "scenarioName"
@@ -53,10 +52,10 @@ class TearDownSpec extends Specification with Mockito {
 
     }
 
-    "Release the simulation lock" in {
+    "Release the simulation lock" in new ActorScope {
       val sim = mock[RuntimeStubbing]
       sim.acquireLock(anyString) returns Future.successful(true)
-      val su = tearDownWith(sim)
+      val su = tearDownWith(sim, TestActorRef[NextActor])
 
       val session = mock[Session]
       session.scenarioName returns "scenarioName"
@@ -66,7 +65,7 @@ class TearDownSpec extends Specification with Mockito {
 
     }
 
-    "Call the next actor in the chain" in {
+    "Call the next actor in the chain" in new ActorScope {
 
       val sim = mock[RuntimeStubbing]
       sim.acquireLock(anyString) returns Future.successful(true)

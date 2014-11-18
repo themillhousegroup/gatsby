@@ -11,11 +11,9 @@ import io.gatling.core.validation.Success
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import akka.testkit.{ TestProbe, TestActorRef }
 import scala.concurrent.duration.Duration
-import com.themillhousegroup.gatsby.test.NextActor
+import com.themillhousegroup.gatsby.test.{ ActorScope, NextActor }
 
 class SpinUpSpec extends Specification with Mockito {
-
-  implicit val system = ActorSystem.create("SpinUpSpec")
 
   val waitTime = Duration(5, "seconds")
 
@@ -25,7 +23,7 @@ class SpinUpSpec extends Specification with Mockito {
     val next: ActorRef) extends CanSpinUp with StrictLogging
 
   def spinUpWith(sim: RuntimeStubbing,
-    next: ActorRef = TestActorRef[NextActor],
+    next: ActorRef,
     requestName: String = "request",
     se: StubExchange = mock[StubExchange]) = {
 
@@ -41,10 +39,10 @@ class SpinUpSpec extends Specification with Mockito {
 
   "SpinUp Actor" should {
 
-    "Execute immediately if there is no contention for the simulation lock" in {
+    "Execute immediately if there is no contention for the simulation lock" in new ActorScope {
       val sim = mock[RuntimeStubbing]
       sim.acquireLock(anyString) returns Future.successful(true)
-      val su = spinUpWith(sim)
+      val su = spinUpWith(sim, TestActorRef[NextActor])
 
       val session = mock[Session]
       session.scenarioName returns "scenarioName"
@@ -54,7 +52,7 @@ class SpinUpSpec extends Specification with Mockito {
 
     }
 
-    "Call the next actor in the chain" in {
+    "Call the next actor in the chain" in new ActorScope {
 
       val sim = mock[RuntimeStubbing]
       sim.acquireLock(anyString) returns Future.successful(true)
@@ -73,7 +71,7 @@ class SpinUpSpec extends Specification with Mockito {
       result must beEqualTo(session)
     }
 
-    "Await the simulation lock before adding an exchange" in {
+    "Await the simulation lock before adding an exchange" in new ActorScope {
       val sim = mock[RuntimeStubbing]
       sim.acquireLock(anyString) answers { _ =>
         Future.successful {
@@ -81,7 +79,7 @@ class SpinUpSpec extends Specification with Mockito {
           true
         }
       }
-      val su = spinUpWith(sim)
+      val su = spinUpWith(sim, TestActorRef[NextActor])
 
       val session = mock[Session]
       session.scenarioName returns "scenarioName"
