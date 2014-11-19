@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
     "com.dividezero"        %%  "stubby-standalone"           % "1.2",
     "ch.qos.logback"        %   "logback-classic"             % "1.1.2",
     "joda-time"             %   "joda-time"                   % "2.5",
-    "org.mockito"           %   "mockito-all"                 % "1.9.0"       % "test",
+    "org.mockito"           %   "mockito-all"                 % "1.9.5"       % "test",
     "org.specs2"            %%  "specs2"                      % "2.3.12"      % "test",
     "com.typesafe.akka"     %%  "akka-testkit"                % "2.3.6"       % "test"
 )
@@ -22,6 +22,9 @@ libraryDependencies ++= Seq(
 resolvers ++= Seq(  "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
                     "oss-releases"  at "https://oss.sonatype.org/content/repositories/releases",
                     "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
+
+
+parallelExecution in Test := false
 
 jacoco.settings
 
