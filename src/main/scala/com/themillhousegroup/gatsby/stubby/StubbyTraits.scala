@@ -31,6 +31,8 @@ trait EnforcesMutualExclusion {
   this: HasLogger =>
 
   val token = new AtomicBoolean(false)
+  val loopWaitMillis = 1000
+  var currentLockHolder: Option[String] = None
 
   import scala.concurrent.ExecutionContext.Implicits.global
   def acquireLock(taskName: String): Future[Boolean] = {
@@ -38,19 +40,26 @@ trait EnforcesMutualExclusion {
     // hack impl
     Future {
       while (!token.compareAndSet(false, true)) {
-        logger.debug(s"Awaiting lock for $taskName")
-        Thread.sleep(1000)
+        logger.debug(s"Awaiting lock for $taskName because the current holder is $currentLockHolder")
+        Thread.sleep(loopWaitMillis)
       }
 
       logger.debug(s"ACQUIRED Lock for $taskName")
+      currentLockHolder = Some(taskName)
       true
     }
   }
 
   def releaseLock(taskName: String) = {
-    logger.debug(s"Releasing lock for $taskName")
-    token.set(false)
+    if (currentLockHolder.exists(_ == taskName)) {
+      logger.debug(s"Releasing lock for $taskName")
+      currentLockHolder = None
+      token.set(false)
+    } else {
+      logger.warn(s"Can't release lock; $taskName is not the holder")
+    }
   }
+
 }
 
 trait RuntimeStubbing extends CanAddStubExchanges with CanRemoveStubExchanges with EnforcesMutualExclusion with HasLogger
