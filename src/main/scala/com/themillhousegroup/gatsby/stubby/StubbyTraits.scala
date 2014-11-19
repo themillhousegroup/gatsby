@@ -52,7 +52,7 @@ trait EnforcesMutualExclusion {
 
   def releaseLock(taskName: String): Boolean = {
     currentLockHolder.filter(_ == taskName).fold {
-      logger.warn(s"Can't release lock; $taskName is not the holder")
+      logger.warn(s"Can't release lock; $taskName is not the holder: $currentLockHolder")
       false
     } { holder =>
       logger.debug(s"Releasing lock for $holder")
