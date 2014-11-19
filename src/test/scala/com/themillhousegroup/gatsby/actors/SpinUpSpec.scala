@@ -5,11 +5,11 @@ import org.specs2.mock.Mockito
 import io.gatling.core.session.{ Session, Expression }
 import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
 import com.dividezero.stubby.core.model.StubExchange
-import akka.actor.{ Actor, ActorSystem, ScalaActorRef, ActorRef }
+import akka.actor.ActorRef
 import scala.concurrent.{ Await, Promise, Future }
 import io.gatling.core.validation.Success
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import akka.testkit.{ TestProbe, TestActorRef }
+import akka.testkit.TestActorRef
 import scala.concurrent.duration.Duration
 import com.themillhousegroup.gatsby.test.{ ActorScope, NextActor }
 
@@ -41,12 +41,12 @@ class SpinUpSpec extends Specification with Mockito {
 
     "Execute immediately if there is no contention for the simulation lock" in new ActorScope {
       val sim = mock[RuntimeStubbing]
-      sim.acquireLock(anyString) returns Future.successful(true)
+      sim.acquireLock(anyString) answers (_ => Future.successful(true))
       val su = spinUpWith(sim, TestActorRef[NextActor])
 
       val session = mock[Session]
       session.scenarioName returns "scenarioName"
-      Future { su.execute(session) }
+      su.execute(session)
 
       there was one(sim).addExchange(anyString, any[StubExchange])
 
