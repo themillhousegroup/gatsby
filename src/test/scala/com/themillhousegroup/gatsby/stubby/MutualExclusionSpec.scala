@@ -63,5 +63,30 @@ class MutualExclusionSpec extends Specification with Mockito {
       t.currentLockHolder must beNone
 
     }
+
+    "Only allow the holder of the lock to release it" in {
+
+      val t = new TestMutex()
+
+      val fTime = t.acquireLock("owner").map { _ =>
+      }
+
+      t.currentLockHolder must beSome("owner")
+
+      t.releaseLock("other") must beFalse
+
+      t.currentLockHolder must beSome("owner")
+
+      t.releaseLock("owner") must beTrue
+
+      t.currentLockHolder must beNone
+    }
+
+    "Return false if the lock is released before it is acquired" in {
+
+      val t = new TestMutex()
+
+      t.releaseLock("wrong") must beFalse
+    }
   }
 }

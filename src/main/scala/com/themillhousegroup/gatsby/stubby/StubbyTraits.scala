@@ -50,13 +50,15 @@ trait EnforcesMutualExclusion {
     }
   }
 
-  def releaseLock(taskName: String) = {
-    if (currentLockHolder.exists(_ == taskName)) {
-      logger.debug(s"Releasing lock for $taskName")
+  def releaseLock(taskName: String): Boolean = {
+    currentLockHolder.filter(_ == taskName).fold {
+      logger.warn(s"Can't release lock; $taskName is not the holder")
+      false
+    } { holder =>
+      logger.debug(s"Releasing lock for $holder")
       currentLockHolder = None
       token.set(false)
-    } else {
-      logger.warn(s"Can't release lock; $taskName is not the holder")
+      true
     }
   }
 
