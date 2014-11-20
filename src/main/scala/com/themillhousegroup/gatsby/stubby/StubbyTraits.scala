@@ -13,6 +13,10 @@ trait HasStubbyServer {
   val stubbyServer: StubbyServer
 }
 
+trait HasExtraStubbyServers {
+  val stubbyServers: scala.collection.mutable.Map[Int, StubbyServer]
+}
+
 trait CanAddStubExchanges {
   /**
    * @return true if the exchange was added

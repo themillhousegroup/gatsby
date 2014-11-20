@@ -14,6 +14,7 @@ import com.dividezero.stubby.core.model.StubExchange
  */
 abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     with HasStubbyServer
+    with HasExtraStubbyServers
     with RuntimeStubbing
     with GatsbyAssertionSupport
     with HasLogger {
@@ -62,19 +63,39 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     stubbyServer.start(listenPort)
 
     simulationWideExchanges.foreach { se =>
-      logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
-      stubbyServer.addExchange(se)
+      if (se.isInstanceOf[StubExchangeOnPort]) {
+
+        val seop = se.asInstanceOf[StubExchangeOnPort]
+        val serverOnPort = stubbyServers.applyOrElse(seop.port, { port: Int =>
+          val ts = new TameStubby()
+          ts.start(port)
+          stubbyServers += (port -> ts)
+          ts
+        })
+        serverOnPort.addExchange(seop)
+      } else {
+        logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
+        stubbyServer.addExchange(se)
+      }
     }
   }
 
   after {
     logger.info(s"Shutting down tame Stubby on port $listenPort")
     stubbyServer.stop
+
+    stubbyServers.foreach {
+      case (p, ss) =>
+        logger.info(s"Shutting down tame Stubby on port $p")
+        ss.stop
+    }
   }
 }
 
 class GatsbySimulation(listenPort: Int) extends AbstractGatsbySimulation(listenPort) {
   val stubbyServer = new TameStubby()
+
+  val stubbyServers = mutable.Map[Int, StubbyServer]()
 
   val simulationWideExchanges: Seq[StubExchange] = Nil
 }
