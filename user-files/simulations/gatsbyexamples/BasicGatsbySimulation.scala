@@ -2,8 +2,10 @@ package gatsbyexamples
 
 import io.gatling.core.Predef._
 import com.themillhousegroup.gatsby.GatsbySimulation
-import com.dividezero.stubby.core.model.{StubResponse, StubRequest, StubExchange}
+import com.dividezero.stubby.core.model.{StubRequest, StubResponse, StubExchange}
 import io.gatling.http.Predef._
+import com.themillhousegroup.gatsby.stubby.StubExchangeOnPort
+import com.dividezero.stubby.core.model.StubRequest
 
 /**
  * If all you need is an unchanging backend for your tests,
@@ -15,7 +17,9 @@ class BasicGatsbySimulation extends GatsbySimulation(9999) {
 
   override val simulationWideExchanges = Seq(
     StubExchange( StubRequest(Some("GET"), Some("/"), Nil, Nil, None),
-                  StubResponse(200, Nil, None))
+                  StubResponse(200, Nil, None)),
+    StubExchangeOnPort (8888)(StubRequest(Some("GET"), Some("/"), Nil, Nil, None),
+                              StubResponse(200, Nil, None))
   )
 
   val httpConf = http
