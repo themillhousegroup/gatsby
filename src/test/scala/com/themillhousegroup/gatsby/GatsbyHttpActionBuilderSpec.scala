@@ -14,6 +14,7 @@ import io.gatling.core.akka.GatlingActorSystem
 import io.gatling.core.validation.Success
 import io.gatling.http.request.{ HttpRequestConfig, HttpRequestDef }
 import com.dividezero.stubby.core.model.StubExchange
+import scala.concurrent.Future
 
 class GatsbyHttpActionBuilderSpec extends Specification with Mockito {
 
@@ -26,8 +27,8 @@ class GatsbyHttpActionBuilderSpec extends Specification with Mockito {
 
       implicit val mockSimulation = mock[RuntimeStubbing]
 
-      val mockSession = mock[Session]
-      mockSession.scenarioName returns "s1"
+      val mockSession = Session("s1", "me")
+      mockSimulation.acquireLock(anyString) returns Future.successful(true)
 
       val requestBuilder = givenRequest("GET", "/foo", "myRequest")
 
@@ -39,9 +40,7 @@ class GatsbyHttpActionBuilderSpec extends Specification with Mockito {
       mockProtocols.getProtocol[ThrottlingProtocol] returns None
       mockProtocols.getProtocol[HttpProtocol] returns Some(HttpProtocol.DefaultHttpProtocol)
 
-      val result = builder.build(next, mockProtocols)
-
-      //      there was one(mockSimulation).addExchange(anyString, any[StubExchange])
+      builder.build(next, mockProtocols)
     }
   }
 
