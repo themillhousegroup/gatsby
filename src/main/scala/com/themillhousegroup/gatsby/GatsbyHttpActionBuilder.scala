@@ -27,6 +27,12 @@ class GatsbyHttpActionBuilder(
     val responseContentType: Option[String],
     simulation: RuntimeStubbing) extends HttpActionBuilder with HasLogger {
 
+  /** Chain up additional stubbed responses after the "primary" one */
+  def andAdditionalStubbing(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef], responseContentType: Option[String] = None) = {
+    logger.info(s"Additional stubbing specified: $method $url")
+    this
+  }
+
   def build(next: ActorRef, protocols: Protocols): ActorRef = {
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
     val httpRequest = requestBuilder.build(httpProtocol(protocols), throttled)
