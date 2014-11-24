@@ -11,6 +11,7 @@ class GatsbySimulationSpec extends Specification with Mockito {
 
   class TestGatsbySimulation(val simulationWideExchanges: Seq[StubExchange]) extends AbstractGatsbySimulation(8888) {
     val stubbyServer = mockStubbyServer
+    val stubbyServers = scala.collection.mutable.Map[Int, StubbyServer]()
   }
 
   val mockExchange = mock[StubExchange]
