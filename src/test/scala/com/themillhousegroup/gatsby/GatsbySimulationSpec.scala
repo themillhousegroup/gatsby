@@ -7,17 +7,15 @@ import com.themillhousegroup.gatsby.stubby.StubbyServer
 
 class GatsbySimulationSpec extends Specification with Mockito {
 
-  val mockStubbyServer = mock[StubbyServer]
-
   class TestGatsbySimulation(val simulationWideExchanges: Seq[StubExchange]) extends AbstractGatsbySimulation(8888) {
+    val mockStubbyServer = mock[StubbyServer]
     val stubbyServer = mockStubbyServer
     val stubbyServers = scala.collection.mutable.Map[Int, StubbyServer]()
   }
 
-  val mockExchange = mock[StubExchange]
-
   "GatsbySimulation" should {
     "Allow Simulation-wide exchanges to be defined" in {
+      val mockExchange = mock[StubExchange]
       val testGatsbySimulation = new TestGatsbySimulation(Seq(mockExchange))
 
       testGatsbySimulation.before()
@@ -27,8 +25,8 @@ class GatsbySimulationSpec extends Specification with Mockito {
 
     }
 
-    "Allow exchanges to be added per-request" in {
-      val testGatsbySimulation = new TestGatsbySimulation(Seq(mockExchange))
+    "Allow single exchanges to be added per-request" in {
+      val testGatsbySimulation = new TestGatsbySimulation(Nil)
 
       val mockStubExchange = givenStubExchange("GET", "/bar")
 
@@ -37,8 +35,21 @@ class GatsbySimulationSpec extends Specification with Mockito {
       testGatsbySimulation.addExchange("foo", mockStubExchange) must beFalse
     }
 
+    "Allow multiple exchanges to be added per-request" in {
+      val testGatsbySimulation = new TestGatsbySimulation(Nil)
+
+      val mockStubExchange1 = givenStubExchange("GET", "/bar")
+      val mockStubExchange2 = givenStubExchange("POST", "/baz")
+
+      testGatsbySimulation.addExchanges("foo", Seq(mockStubExchange1, mockStubExchange2)) must beTrue
+
+      testGatsbySimulation.addExchange("foo", mockStubExchange1) must beFalse // We already know it
+
+      there were two(testGatsbySimulation.mockStubbyServer).addExchange(any[StubExchange])
+    }
+
     "Allow exchanges to be removed per-prefix" in {
-      val testGatsbySimulation = new TestGatsbySimulation(Seq(mockExchange))
+      val testGatsbySimulation = new TestGatsbySimulation(Nil)
 
       val mockStubExchange = givenStubExchange("GET", "/bar")
 
