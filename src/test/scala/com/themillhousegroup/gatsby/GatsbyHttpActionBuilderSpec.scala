@@ -1,20 +1,19 @@
 package com.themillhousegroup.gatsby
 
 import org.specs2.mock.Mockito
-import org.specs2.mutable.Specification
+import org.specs2.mutable.{ After, Specification }
 import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
 import io.gatling.core.session.{ Expression, Session }
 import io.gatling.http.request.builder.{ CommonAttributes, AbstractHttpRequestBuilder }
-import com.themillhousegroup.gatsby.test.{ NextActor, ActorScope }
-import akka.testkit.TestActorRef
+import com.themillhousegroup.gatsby.test.ActorScope
 import io.gatling.core.config.{ GatlingConfiguration, Protocols }
 import io.gatling.http.config.{ HttpProtocolResponsePart, HttpProtocol }
 import io.gatling.core.controller.throttle.ThrottlingProtocol
 import io.gatling.core.akka.GatlingActorSystem
 import io.gatling.core.validation.Success
 import io.gatling.http.request.{ HttpRequestConfig, HttpRequestDef }
-import com.dividezero.stubby.core.model.StubExchange
 import scala.concurrent.Future
+import akka.actor.ActorRef
 
 class GatsbyHttpActionBuilderSpec extends Specification with Mockito {
 
@@ -34,7 +33,7 @@ class GatsbyHttpActionBuilderSpec extends Specification with Mockito {
 
       val builder = GatsbyHttpActionBuilder.withStubby(requestBuilder)
 
-      val next = TestActorRef[NextActor]
+      val next = mock[ActorRef]
 
       val mockProtocols = mock[Protocols]
       mockProtocols.getProtocol[ThrottlingProtocol] returns None
