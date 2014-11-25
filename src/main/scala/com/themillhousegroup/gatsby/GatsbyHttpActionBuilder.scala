@@ -8,6 +8,9 @@ import io.gatling.core.controller.throttle.ThrottlingProtocol
 import com.themillhousegroup.gatsby.actors.{ SpinUp, TearDown }
 import com.themillhousegroup.gatsby.stubby.{ HasLogger, RuntimeStubbing, StubExchanges }
 import io.gatling.http.request.builder.AbstractHttpRequestBuilder
+import com.dividezero.stubby.core.model.StubExchange
+import io.gatling.core.session.Expression
+import scala.collection.mutable
 
 object GatsbyHttpActionBuilder {
 
@@ -27,6 +30,14 @@ class GatsbyHttpActionBuilder(
     val responseContentType: Option[String],
     simulation: RuntimeStubbing) extends HttpActionBuilder with HasLogger {
 
+  val stubExchanges = mutable.Buffer[Expression[StubExchange]]()
+  stubExchanges += (StubExchanges.buildExchangeExpression(
+    requestBuilder.commonAttributes.method,
+    requestBuilder.commonAttributes.urlOrURI.left.get,
+    responseStatus,
+    responseBody,
+    responseContentType))
+
   /** Chain up additional stubbed responses after the "primary" one */
   def andAdditionalStubbing(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef], responseContentType: Option[String] = None) = {
     logger.info(s"Additional stubbing specified: $method $url")
@@ -37,16 +48,10 @@ class GatsbyHttpActionBuilder(
     val throttled = protocols.getProtocol[ThrottlingProtocol].isDefined
     val httpRequest = requestBuilder.build(httpProtocol(protocols), throttled)
 
-    val se = StubExchanges.buildExchangeExpression(requestBuilder.commonAttributes.method,
-      requestBuilder.commonAttributes.urlOrURI.left.get,
-      responseStatus,
-      responseBody,
-      responseContentType)
-
     // Build the chain of 3 actors that configure Stubby, fire the request, and de-configure Stubby:
     val tearDown = actor(new TearDown(simulation, requestBuilder.commonAttributes.requestName, next))
     val request = actor(new HttpRequestAction(httpRequest, tearDown))
-    val spinUp = actor(new SpinUp(simulation, requestBuilder.commonAttributes.requestName, se, request))
+    val spinUp = actor(new SpinUp(simulation, requestBuilder.commonAttributes.requestName, stubExchanges.toSeq, request))
 
     spinUp
   }

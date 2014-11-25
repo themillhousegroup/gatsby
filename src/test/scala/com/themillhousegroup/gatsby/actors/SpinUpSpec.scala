@@ -19,7 +19,7 @@ class SpinUpSpec extends Specification with Mockito {
 
   class TestSpinUp(val simulation: RuntimeStubbing,
     val requestNameExp: Expression[String],
-    val se: Expression[StubExchange],
+    val ses: Seq[Expression[StubExchange]],
     val next: ActorRef) extends CanSpinUp with StrictLogging
 
   def spinUpWith(sim: RuntimeStubbing,
@@ -34,7 +34,7 @@ class SpinUpSpec extends Specification with Mockito {
 
     mockSE(any[Session]) returns Success(se)
 
-    new TestSpinUp(sim, mockReq, mockSE, next)
+    new TestSpinUp(sim, mockReq, Seq(mockSE), next)
   }
 
   "SpinUp Actor" should {
