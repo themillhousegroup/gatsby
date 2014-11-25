@@ -31,16 +31,24 @@ class GatsbyHttpActionBuilder(
     simulation: RuntimeStubbing) extends HttpActionBuilder with HasLogger {
 
   val stubExchanges = mutable.Buffer[Expression[StubExchange]]()
-  stubExchanges += (StubExchanges.buildExchangeExpression(
+  stubExchanges += StubExchanges.buildExchangeExpression(
     requestBuilder.commonAttributes.method,
     requestBuilder.commonAttributes.urlOrURI.left.get,
     responseStatus,
     responseBody,
-    responseContentType))
+    responseContentType)
 
   /** Chain up additional stubbed responses after the "primary" one */
   def andAdditionalStubbing(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef], responseContentType: Option[String] = None) = {
     logger.info(s"Additional stubbing specified: $method $url")
+
+    import io.gatling.core.session.ExpressionWrapper
+    stubExchanges += StubExchanges.buildExchangeExpression(
+      method,
+      ExpressionWrapper[String](url).expression,
+      responseStatus,
+      responseBody,
+      responseContentType)
     this
   }
 

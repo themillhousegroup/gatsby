@@ -21,7 +21,8 @@ trait CanAddStubExchanges {
   /**
    * @return true if the exchange was added
    */
-  def addExchange(requestName: String, se: StubExchange): Boolean
+  def addExchange(requestName: String, se: StubExchange) = addExchanges(requestName, Seq(se))
+  def addExchanges(requestName: String, ses: Seq[StubExchange]): Boolean
 }
 
 trait CanRemoveStubExchanges {
