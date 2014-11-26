@@ -20,9 +20,9 @@ class MutualExclusionSpec extends Specification with Mockito {
 
       val hadToWait = t.acquireLock("direct")
 
-      t.currentLockHolder must beSome("direct")
-
       val hadToWaitForLock = Await.result(hadToWait, maxWait)
+
+      t.currentLockHolder must beSome("direct")
 
       t.releaseLock("direct")
 
