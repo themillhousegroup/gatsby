@@ -39,7 +39,7 @@ class GatsbyHttpActionBuilder(
     responseContentType)
 
   /** Chain up additional stubbed responses after the "primary" one */
-  def andAdditionalStubbing(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef], responseContentType: Option[String] = None) = {
+  def andAdditionalStubbing(method: String, url: String, responseStatus: Int = 200, responseBody: Option[AnyRef] = None, responseContentType: Option[String] = None) = {
     logger.info(s"Additional stubbing specified: $method $url")
 
     import io.gatling.core.session.ExpressionWrapper
