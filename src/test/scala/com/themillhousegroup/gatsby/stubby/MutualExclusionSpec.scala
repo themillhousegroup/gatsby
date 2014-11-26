@@ -18,21 +18,17 @@ class MutualExclusionSpec extends Specification with Mockito {
 
       val t = new TestMutex()
 
-      val s = new StopWatch()
-      s.start
-
-      val fTime = t.acquireLock("direct").map { _ =>
-        s.stop
-        s.getTime
-      }
+      val hadToWait = t.acquireLock("direct")
 
       t.currentLockHolder must beSome("direct")
 
-      Await.result(fTime, maxWait) must beLessThan(900L)
+      val hadToWaitForLock = Await.result(hadToWait, maxWait)
 
       t.releaseLock("direct")
 
       t.currentLockHolder must beNone
+
+      hadToWaitForLock must beFalse
     }
 
     "Force the second in line to wait" in {
@@ -68,8 +64,7 @@ class MutualExclusionSpec extends Specification with Mockito {
 
       val t = new TestMutex()
 
-      val fTime = t.acquireLock("owner").map { _ =>
-      }
+      t.acquireLock("owner")
 
       t.currentLockHolder must beSome("owner")
 
