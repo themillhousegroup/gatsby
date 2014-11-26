@@ -14,9 +14,7 @@
 
 INITIAL_DIR=`pwd`
 BIN_DIR=$(dirname $0)
-cd $BIN_DIR
-cd ..
-PROJECT_ROOT=`pwd`
+cd ${BIN_DIR}/.." && PROJECT_ROOT=`pwd`
 
 if [ $# -gt 0 ] && [ "$1" == "-f" ]
 then

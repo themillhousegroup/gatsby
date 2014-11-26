@@ -25,7 +25,7 @@ GATLING_LIBS="${GATLING_LIBS:=$GATLING_HOME/target/universal/stage/lib}"
 
 if [ ! -d "$GATLING_LIBS" ]; then
     echo "Couldn't find any Gatling libs under target/universal/stage/lib - putting them there now"
-    sbt stage
+    cd "${GATLING_HOME}" && sbt stage && cd "${OLDDIR}"
 fi
 
 export GATLING_HOME GATLING_CONF GATLING_LIBS
