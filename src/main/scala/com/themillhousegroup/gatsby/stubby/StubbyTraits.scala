@@ -40,21 +40,32 @@ trait EnforcesMutualExclusion {
   var currentLockHolder: Option[String] = None
 
   import scala.concurrent.ExecutionContext.Implicits.global
+
+  /**
+   * @return Future(true) if we got direct access, Future(false) if we had to wait
+   */
   def acquireLock(taskName: String): Future[Boolean] = {
     logger.debug(s"acquireLock entered for $taskName")
     // hack impl
     Future {
+      var hadToWait = false
+
       while (!token.compareAndSet(false, true)) {
+        hadToWait = true
         logger.debug(s"Awaiting lock for $taskName because the current holder is $currentLockHolder")
         Thread.sleep(loopWaitMillis)
+
       }
 
       logger.debug(s"ACQUIRED Lock for $taskName")
       currentLockHolder = Some(taskName)
-      true
+      hadToWait
     }
   }
 
+  /**
+   * @return true if we were the holder, and we released it
+   */
   def releaseLock(taskName: String): Boolean = {
     currentLockHolder.filter(_ == taskName).fold {
       logger.warn(s"Can't release lock; $taskName is not the holder: $currentLockHolder")
