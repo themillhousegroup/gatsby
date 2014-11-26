@@ -41,7 +41,7 @@ class SpinUpSpec extends Specification with Mockito {
 
     "Execute immediately if there is no contention for the simulation lock" in new ActorScope {
       val sim = mock[RuntimeStubbing]
-      sim.acquireLock(anyString) answers (_ => Future.successful(true))
+      sim.acquireLock(anyString) returns Future.successful(true)
       val su = spinUpWith(sim, TestActorRef[NextActor])
 
       val session = mock[Session]
