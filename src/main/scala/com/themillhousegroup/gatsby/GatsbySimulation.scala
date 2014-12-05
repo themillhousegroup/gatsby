@@ -13,13 +13,11 @@ import com.dividezero.stubby.core.model.StubExchange
  *
  */
 abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
-    with HasStubbyServer
-    with HasExtraStubbyServers
     with RuntimeStubbing
     with GatsbyAssertionSupport
     with HasLogger {
 
-  val stubbyServer: StubbyServer
+  val stubbyServers: mutable.Map[Int, StubbyServer]
 
   implicit val simulation: AbstractGatsbySimulation = this
 
@@ -43,7 +41,7 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
 
     diff.foreach { se =>
       logger.info(s"Adding scenario ($requestName) exchange: ${se.request.method.get} ${se.request.path.get}")
-      stubbyServer.addExchange(se)
+      mainServer.addExchange(se)
       exchanges += se
     }
 
@@ -60,7 +58,7 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     }.foreach {
       case (k, v) => {
         logger.info(s"Removing scenario exchanges (${v.length}) for $k")
-        v.foreach(stubbyServer.removeExchange)
+        v.foreach(mainServer.removeExchange)
         scenarioExchanges -= k
       }
     }
@@ -68,10 +66,19 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     scenarioExchanges.size < initialLength
   }
 
+  def startStubbyOnPort(port: Int) = {
+    val ts = new TameStubby()
+    ts.start(port)
+    stubbyServers += (port -> ts)
+    ts
+  }
+
+  def mainServer = stubbyServers(listenPort)
+
   before {
 
     logger.info(s"Launching tame Stubby on port $listenPort")
-    stubbyServer.start(listenPort)
+    startStubbyOnPort(listenPort)
 
     simulationWideExchanges.foreach { se =>
       if (se.isInstanceOf[StubExchangeOnPort]) {
@@ -86,15 +93,12 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
         serverOnPort.addExchange(seop)
       } else {
         logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
-        stubbyServer.addExchange(se)
+        mainServer.addExchange(se)
       }
     }
   }
 
   after {
-    logger.info(s"Shutting down tame Stubby on port $listenPort")
-    stubbyServer.stop
-
     stubbyServers.foreach {
       case (p, ss) =>
         logger.info(s"Shutting down tame Stubby on port $p")
@@ -104,7 +108,6 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
 }
 
 class GatsbySimulation(listenPort: Int) extends AbstractGatsbySimulation(listenPort) {
-  val stubbyServer = new TameStubby()
 
   val stubbyServers = mutable.Map[Int, StubbyServer]()
 
