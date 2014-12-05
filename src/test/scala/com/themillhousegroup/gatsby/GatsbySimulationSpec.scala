@@ -9,8 +9,7 @@ class GatsbySimulationSpec extends Specification with Mockito {
 
   class TestGatsbySimulation(val simulationWideExchanges: Seq[StubExchange]) extends AbstractGatsbySimulation(8888) {
     val mockStubbyServer = mock[StubbyServer]
-    val stubbyServer = mockStubbyServer
-    val stubbyServers = scala.collection.mutable.Map[Int, StubbyServer]()
+    val stubbyServers = scala.collection.mutable.Map[Int, StubbyServer](8888 -> mockStubbyServer)
   }
 
   "GatsbySimulation" should {
