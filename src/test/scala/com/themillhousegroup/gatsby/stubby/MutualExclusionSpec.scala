@@ -5,12 +5,15 @@ import org.specs2.mock.Mockito
 import org.apache.commons.lang3.time.StopWatch
 import scala.concurrent.{ Future, Await }
 import scala.concurrent.duration.Duration
+import org.slf4j.Logger
 
 class MutualExclusionSpec extends Specification with Mockito {
 
   val maxWait = Duration(5, "seconds")
 
-  class TestMutex extends EnforcesMutualExclusion with HasLogger {}
+  class TestMutex extends EnforcesMutualExclusion with HasLogger {
+    override lazy val logger = mock[Logger]
+  }
 
   "EnforcesMutualExclusion trait" should {
 

@@ -5,22 +5,24 @@ import org.specs2.mock.Mockito
 import io.gatling.core.session.{ Session, Expression }
 import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
 import com.dividezero.stubby.core.model.StubExchange
-import akka.actor.{ ActorSystem, ActorRef }
+import akka.actor.ActorRef
+import akka.testkit.TestActorRef
 import scala.concurrent.{ Await, Future }
 import io.gatling.core.validation.Success
-import com.typesafe.scalalogging.slf4j.StrictLogging
-import akka.testkit.TestActorRef
 import com.themillhousegroup.gatsby.test.{ ActorScope, NextActor }
 import scala.concurrent.duration.Duration
+import com.typesafe.scalalogging.slf4j.Logger
 
 class TearDownSpec extends Specification with Mockito {
 
   val waitTime = Duration(5, "seconds")
 
   class TestTearDown(val simulation: RuntimeStubbing,
-    val requestNameExp: Expression[String],
-    val se: Expression[StubExchange],
-    val next: ActorRef) extends CanTearDown with StrictLogging
+      val requestNameExp: Expression[String],
+      val se: Expression[StubExchange],
+      val next: ActorRef) extends CanTearDown {
+    override val logger = Logger(mock[org.slf4j.Logger])
+  }
 
   def tearDownWith(sim: RuntimeStubbing,
     next: ActorRef,
