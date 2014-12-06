@@ -84,12 +84,7 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
       if (se.isInstanceOf[StubExchangeOnPort]) {
 
         val seop = se.asInstanceOf[StubExchangeOnPort]
-        val serverOnPort = stubbyServers.applyOrElse(seop.port, { port: Int =>
-          val ts = new TameStubby()
-          ts.start(port)
-          stubbyServers += (port -> ts)
-          ts
-        })
+        val serverOnPort = stubbyServers.applyOrElse(seop.port, startStubbyOnPort)
         serverOnPort.addExchange(seop)
       } else {
         logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
