@@ -50,6 +50,7 @@ class SpinUpSpec extends Specification with Mockito {
       session.scenarioName returns "scenarioName"
       su.execute(session)
 
+      Await.ready(su.executionComplete, waitTime)
       there was one(sim).addExchange(anyString, any[StubExchange])
 
     }
@@ -89,7 +90,7 @@ class SpinUpSpec extends Specification with Mockito {
 
       there was no(sim).addExchange(anyString, any[StubExchange])
 
-      Thread.sleep(3000)
+      Await.ready(su.executionComplete, waitTime)
 
       there was one(sim).addExchange(anyString, any[StubExchange])
     }

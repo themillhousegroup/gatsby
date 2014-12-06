@@ -7,6 +7,7 @@ import io.gatling.core.session.{ Expression, Session }
 import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
 import com.typesafe.scalalogging.slf4j.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ Future, Promise }
 
 class SpinUp(val simulation: RuntimeStubbing,
     val requestNameExp: Expression[String],
@@ -20,6 +21,10 @@ trait CanSpinUp {
   val ses: Seq[Expression[StubExchange]]
   val next: ActorRef
   protected val logger: Logger
+  private[this] val executionPromise = Promise[Boolean]
+
+  // For testing; a marker that shows that the work has been done
+  val executionComplete: Future[Boolean] = executionPromise.future
 
   def execute(session: Session): Unit = {
 
@@ -29,6 +34,7 @@ trait CanSpinUp {
       simulation.acquireLock(requestName).map { ready =>
         ses.foreach(se => simulation.addExchange(requestName, se(session).get))
         next ! session
+        executionPromise.success(ready)
       }
     }
   }
