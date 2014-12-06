@@ -67,7 +67,7 @@ class MutualExclusionSpec extends Specification with Mockito {
 
       val t = new TestMutex()
 
-      t.acquireLock("owner")
+      Await.ready(t.acquireLock("owner"), maxWait)
 
       t.currentLockHolder must beSome("owner")
 
