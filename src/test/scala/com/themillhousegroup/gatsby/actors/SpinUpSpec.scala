@@ -11,7 +11,7 @@ import io.gatling.core.validation.Success
 import com.typesafe.scalalogging.slf4j.{ Logger, StrictLogging }
 import akka.testkit.TestActorRef
 import scala.concurrent.duration.Duration
-import com.themillhousegroup.gatsby.test.{ ActorScope, NextActor }
+import com.themillhousegroup.gatsby.test.{ MockedLogger, ActorScope, NextActor }
 
 class SpinUpSpec extends Specification with Mockito {
 
@@ -20,8 +20,8 @@ class SpinUpSpec extends Specification with Mockito {
   class TestSpinUp(val simulation: RuntimeStubbing,
       val requestNameExp: Expression[String],
       val ses: Seq[Expression[StubExchange]],
-      val next: ActorRef) extends CanSpinUp {
-    override val logger = Logger(mock[org.slf4j.Logger])
+      val next: ActorRef) extends CanSpinUp with MockedLogger {
+
   }
 
   def spinUpWith(sim: RuntimeStubbing,

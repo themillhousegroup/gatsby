@@ -9,20 +9,17 @@ import akka.actor.ActorRef
 import akka.testkit.TestActorRef
 import scala.concurrent.{ Await, Future }
 import io.gatling.core.validation.Success
-import com.themillhousegroup.gatsby.test.{ ActorScope, NextActor }
+import com.themillhousegroup.gatsby.test.{ MockedLogger, ActorScope, NextActor }
 import scala.concurrent.duration.Duration
-import com.typesafe.scalalogging.slf4j.Logger
 
 class TearDownSpec extends Specification with Mockito {
 
   val waitTime = Duration(5, "seconds")
 
   class TestTearDown(val simulation: RuntimeStubbing,
-      val requestNameExp: Expression[String],
-      val se: Expression[StubExchange],
-      val next: ActorRef) extends CanTearDown {
-    override val logger = Logger(mock[org.slf4j.Logger])
-  }
+    val requestNameExp: Expression[String],
+    val se: Expression[StubExchange],
+    val next: ActorRef) extends CanTearDown with MockedLogger
 
   def tearDownWith(sim: RuntimeStubbing,
     next: ActorRef,
