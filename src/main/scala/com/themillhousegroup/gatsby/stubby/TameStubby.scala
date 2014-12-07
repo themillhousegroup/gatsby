@@ -16,11 +16,11 @@ trait StubbyServer {
 }
 
 /** This is ripped from stubby-standalone's Main object */
-class TameStubby(paths: String*) extends StubbyServer {
+class TameStubby extends StubbyServer {
   private[this] val httpPromise = Promise[Http]
   val http: Future[Http] = httpPromise.future
 
-  val server = new Server(paths.flatMap { n: String => Main.loadFolder(n) })
+  val server = new Server(Nil)
 
   def start(port: Int) = {
     httpPromise.success(Http(port).plan(new AppPlan(server)).beforeStop({ server.fileSource.monitor.stop() }))
