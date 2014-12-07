@@ -1,13 +1,9 @@
 package com.themillhousegroup.gatsby.stubby
 
-import org.slf4j.LoggerFactory
 import com.dividezero.stubby.core.model.StubExchange
 import java.util.concurrent.atomic.AtomicBoolean
 import scala.concurrent.Future
-
-trait HasLogger {
-  lazy val logger = LoggerFactory.getLogger(getClass)
-}
+import com.typesafe.scalalogging.slf4j.Logging
 
 trait CanAddStubExchanges {
   /**
@@ -25,7 +21,7 @@ trait CanRemoveStubExchanges {
 }
 
 trait EnforcesMutualExclusion {
-  this: HasLogger =>
+  this: Logging =>
 
   val token = new AtomicBoolean(false)
   val loopWaitMillis = 1000
@@ -72,4 +68,4 @@ trait EnforcesMutualExclusion {
 
 }
 
-trait RuntimeStubbing extends CanAddStubExchanges with CanRemoveStubExchanges with EnforcesMutualExclusion with HasLogger
+trait RuntimeStubbing extends CanAddStubExchanges with CanRemoveStubExchanges with EnforcesMutualExclusion with Logging

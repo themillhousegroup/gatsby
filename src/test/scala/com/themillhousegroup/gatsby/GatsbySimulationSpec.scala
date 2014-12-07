@@ -5,13 +5,13 @@ import com.dividezero.stubby.core.model.{ StubRequest, StubExchange }
 import org.specs2.mock.Mockito
 import com.themillhousegroup.gatsby.stubby.StubbyServer
 import org.slf4j.Logger
+import com.themillhousegroup.gatsby.test.MockedLogging
 
 class GatsbySimulationSpec extends Specification with Mockito {
 
-  class TestGatsbySimulation(val simulationWideExchanges: Seq[StubExchange]) extends AbstractGatsbySimulation(8888) {
+  class TestGatsbySimulation(val simulationWideExchanges: Seq[StubExchange]) extends AbstractGatsbySimulation(8888) with MockedLogging {
     val mockStubbyServer = mock[StubbyServer]
     val stubbyServers = scala.collection.mutable.Map[Int, StubbyServer](8888 -> mockStubbyServer)
-    override lazy val logger = mock[Logger]
   }
 
   "GatsbySimulation" should {

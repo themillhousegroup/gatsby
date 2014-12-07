@@ -5,6 +5,7 @@ import io.gatling.core.Predef._
 import com.themillhousegroup.gatsby.assertions.GatsbyAssertionSupport
 import com.themillhousegroup.gatsby.stubby._
 import com.dividezero.stubby.core.model.StubExchange
+import com.typesafe.scalalogging.slf4j.Logging
 
 /**
  * A Gatling Simulation that automagically spins up
@@ -15,7 +16,7 @@ import com.dividezero.stubby.core.model.StubExchange
 abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     with RuntimeStubbing
     with GatsbyAssertionSupport
-    with HasLogger {
+    with Logging {
 
   val stubbyServers: mutable.Map[Int, StubbyServer]
 
