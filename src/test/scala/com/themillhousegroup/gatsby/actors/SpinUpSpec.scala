@@ -6,12 +6,11 @@ import io.gatling.core.session.{ Session, Expression }
 import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
 import com.dividezero.stubby.core.model.StubExchange
 import akka.actor.ActorRef
-import scala.concurrent.{ Await, Promise, Future }
+import scala.concurrent.{ Await, Future }
 import io.gatling.core.validation.Success
-import com.typesafe.scalalogging.slf4j.{ Logger, StrictLogging }
 import akka.testkit.TestActorRef
 import scala.concurrent.duration.Duration
-import com.themillhousegroup.gatsby.test.{ MockedLogger, ActorScope, NextActor }
+import com.themillhousegroup.gatsby.test.{ MockedStrictLogging, ActorScope, NextActor }
 
 class SpinUpSpec extends Specification with Mockito {
 
@@ -20,7 +19,7 @@ class SpinUpSpec extends Specification with Mockito {
   class TestSpinUp(val simulation: RuntimeStubbing,
       val requestNameExp: Expression[String],
       val ses: Seq[Expression[StubExchange]],
-      val next: ActorRef) extends CanSpinUp with MockedLogger {
+      val next: ActorRef) extends CanSpinUp with MockedStrictLogging {
 
   }
 

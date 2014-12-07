@@ -9,7 +9,7 @@ import akka.actor.ActorRef
 import akka.testkit.TestActorRef
 import scala.concurrent.{ Await, Future }
 import io.gatling.core.validation.Success
-import com.themillhousegroup.gatsby.test.{ MockedLogger, ActorScope, NextActor }
+import com.themillhousegroup.gatsby.test.{ MockedStrictLogging, ActorScope, NextActor }
 import scala.concurrent.duration.Duration
 
 class TearDownSpec extends Specification with Mockito {
@@ -19,7 +19,7 @@ class TearDownSpec extends Specification with Mockito {
   class TestTearDown(val simulation: RuntimeStubbing,
     val requestNameExp: Expression[String],
     val se: Expression[StubExchange],
-    val next: ActorRef) extends CanTearDown with MockedLogger
+    val next: ActorRef) extends CanTearDown with MockedStrictLogging
 
   def tearDownWith(sim: RuntimeStubbing,
     next: ActorRef,

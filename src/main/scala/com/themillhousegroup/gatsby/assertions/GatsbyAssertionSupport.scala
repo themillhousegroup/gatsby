@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import com.dividezero.stubby.core.model.{ StubExchange, StubRequest }
 import com.themillhousegroup.gatsby.stubby.StubbyServer
 import com.themillhousegroup.gatsby.AbstractGatsbySimulation
+import com.typesafe.scalalogging.slf4j.Logging
 
 trait GatsbyAssertionSupport {
   this: AbstractGatsbySimulation =>
@@ -14,9 +15,7 @@ trait GatsbyAssertionSupport {
   lazy val stubby = new GatsbySelector(mainServer)
 }
 
-class GatsbySelector(val stubbyServer: StubbyServer) {
-
-  private[this] val logger = LoggerFactory.getLogger(getClass)
+class GatsbySelector(val stubbyServer: StubbyServer) extends Logging {
 
   def readerToRequests(filterFn: StubRequest => Boolean)(dr: DataReader) = {
     logger.debug(s"stubbyServer.requestsSeen: ${stubbyServer.requestsSeen}")

@@ -5,7 +5,7 @@ import akka.actor.ActorRef
 import io.gatling.core.action.Chainable
 import io.gatling.core.session.{ Expression, Session }
 import com.themillhousegroup.gatsby.stubby.RuntimeStubbing
-import com.typesafe.scalalogging.slf4j.Logger
+import com.typesafe.scalalogging.slf4j.{ StrictLogging, Logger }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Future, Promise }
 
@@ -16,11 +16,11 @@ class SpinUp(val simulation: RuntimeStubbing,
 }
 
 trait CanSpinUp {
+  this: StrictLogging =>
   val simulation: RuntimeStubbing
   val requestNameExp: Expression[String]
   val ses: Seq[Expression[StubExchange]]
   val next: ActorRef
-  protected val logger: Logger
   private[this] val executionPromise = Promise[Boolean]
 
   // For testing; a marker that shows that the work has been done
