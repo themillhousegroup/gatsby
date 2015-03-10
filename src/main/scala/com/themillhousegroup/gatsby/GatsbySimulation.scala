@@ -13,20 +13,20 @@ import com.typesafe.scalalogging.slf4j.Logging
  * "the thing in the middle"
  *
  */
-abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
+class GatsbySimulation(listenPort: Int) extends Simulation
     with RuntimeStubbing
     with GatsbyAssertionSupport
     with Logging {
 
-  val stubbyServers: mutable.Map[Int, StubbyServer]
+  val stubbyServers = mutable.Map[Int, StubbyServer]()
 
-  implicit val simulation: AbstractGatsbySimulation = this
+  implicit val simulation: GatsbySimulation = this
 
   /**
    * Any stub exchanges defined at this level will be added to the back end
    * and will exist for *all* scenarios.
    */
-  val simulationWideExchanges: Seq[StubExchange]
+  val simulationWideExchanges: Seq[StubExchange] = Nil
 
   val scenarioExchanges = mutable.Map[String, mutable.Buffer[StubExchange]]()
 
@@ -67,7 +67,7 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
     scenarioExchanges.size < initialLength
   }
 
-  def startStubbyOnPort(port: Int) = {
+  def startStubbyOnPort(port: Int): StubbyServer = {
     val ts = new TameStubby()
     ts.start(port)
     stubbyServers += (port -> ts)
@@ -76,21 +76,18 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
 
   def mainServer = stubbyServers(listenPort)
 
-  before {
+  logger.info(s"Launching tame Stubby on port $listenPort")
+  startStubbyOnPort(listenPort)
 
-    logger.info(s"Launching tame Stubby on port $listenPort")
-    startStubbyOnPort(listenPort)
+  simulationWideExchanges.foreach { se =>
+    if (se.isInstanceOf[StubExchangeOnPort]) {
 
-    simulationWideExchanges.foreach { se =>
-      if (se.isInstanceOf[StubExchangeOnPort]) {
-
-        val seop = se.asInstanceOf[StubExchangeOnPort]
-        val serverOnPort = stubbyServers.applyOrElse(seop.port, startStubbyOnPort)
-        serverOnPort.addExchange(seop)
-      } else {
-        logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
-        mainServer.addExchange(se)
-      }
+      val seop = se.asInstanceOf[StubExchangeOnPort]
+      val serverOnPort = stubbyServers.applyOrElse(seop.port, startStubbyOnPort)
+      serverOnPort.addExchange(seop)
+    } else {
+      logger.info("Adding stub exchange: " + se.request.method.get + " " + se.request.path.get)
+      mainServer.addExchange(se)
     }
   }
 
@@ -101,11 +98,4 @@ abstract class AbstractGatsbySimulation(listenPort: Int) extends Simulation
         ss.stop
     }
   }
-}
-
-class GatsbySimulation(listenPort: Int) extends AbstractGatsbySimulation(listenPort) {
-
-  val stubbyServers = mutable.Map[Int, StubbyServer]()
-
-  val simulationWideExchanges: Seq[StubExchange] = Nil
 }

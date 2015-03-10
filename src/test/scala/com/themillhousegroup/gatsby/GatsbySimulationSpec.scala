@@ -4,22 +4,23 @@ import org.specs2.mutable.Specification
 import com.dividezero.stubby.core.model.{ StubRequest, StubExchange }
 import org.specs2.mock.Mockito
 import com.themillhousegroup.gatsby.stubby.StubbyServer
-import org.slf4j.Logger
 import com.themillhousegroup.gatsby.test.MockedLogging
 
 class GatsbySimulationSpec extends Specification with Mockito {
 
-  class TestGatsbySimulation(val simulationWideExchanges: Seq[StubExchange]) extends AbstractGatsbySimulation(8888) with MockedLogging {
-    val mockStubbyServer = mock[StubbyServer]
-    val stubbyServers = scala.collection.mutable.Map[Int, StubbyServer](8888 -> mockStubbyServer)
+  class TestGatsbySimulation(override val simulationWideExchanges: Seq[StubExchange]) extends GatsbySimulation(8888) with MockedLogging {
+    lazy val mockStubbyServer = mock[StubbyServer]
+
+    override def startStubbyOnPort(port: Int): StubbyServer = {
+      stubbyServers += (port -> mockStubbyServer)
+      mockStubbyServer
+    }
   }
 
   "GatsbySimulation" should {
     "Allow Simulation-wide exchanges to be defined" in {
       val mockExchange = mock[StubExchange]
       val testGatsbySimulation = new TestGatsbySimulation(Seq(mockExchange))
-
-      testGatsbySimulation.before()
 
       testGatsbySimulation.simulationWideExchanges must haveLength(1)
       //      there was one(mockStubbyServer).addExchange(mockExchange)

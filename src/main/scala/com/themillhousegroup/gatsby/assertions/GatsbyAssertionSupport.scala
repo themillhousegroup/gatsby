@@ -3,14 +3,13 @@ package com.themillhousegroup.gatsby.assertions
 import io.gatling.core.assertion.Metric
 import io.gatling.core.result.reader.DataReader
 import io.gatling.core.validation.Success
-import org.slf4j.LoggerFactory
 import com.dividezero.stubby.core.model.{ StubExchange, StubRequest }
 import com.themillhousegroup.gatsby.stubby.StubbyServer
-import com.themillhousegroup.gatsby.AbstractGatsbySimulation
 import com.typesafe.scalalogging.slf4j.Logging
+import com.themillhousegroup.gatsby.GatsbySimulation
 
 trait GatsbyAssertionSupport {
-  this: AbstractGatsbySimulation =>
+  this: GatsbySimulation =>
 
   lazy val stubby = new GatsbySelector(mainServer)
 }
