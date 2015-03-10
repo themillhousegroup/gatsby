@@ -8,19 +8,25 @@ import com.themillhousegroup.gatsby.test.MockedLogging
 
 class GatsbySimulationSpec extends Specification with Mockito {
 
-  class TestGatsbySimulation(override val simulationWideExchanges: Seq[StubExchange]) extends GatsbySimulation(8888) with MockedLogging {
+  class TestGatsbySimulation(swes: Seq[StubExchange]) extends GatsbySimulation(8888) with MockedLogging {
+
     lazy val mockStubbyServer = mock[StubbyServer]
+    override lazy val simulationWideExchanges = swes
+    stubbyServers += (8888 -> mockStubbyServer)
 
     override def startStubbyOnPort(port: Int): StubbyServer = {
-      stubbyServers += (port -> mockStubbyServer)
       mockStubbyServer
     }
+
+    override def mainServer = mockStubbyServer
   }
 
   "GatsbySimulation" should {
     "Allow Simulation-wide exchanges to be defined" in {
       val mockExchange = mock[StubExchange]
       val testGatsbySimulation = new TestGatsbySimulation(Seq(mockExchange))
+
+      testGatsbySimulation.before()
 
       testGatsbySimulation.simulationWideExchanges must haveLength(1)
       //      there was one(mockStubbyServer).addExchange(mockExchange)

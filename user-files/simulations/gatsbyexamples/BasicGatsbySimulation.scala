@@ -15,7 +15,7 @@ import com.dividezero.stubby.core.model.StubRequest
  */
 class BasicGatsbySimulation extends GatsbySimulation(9999) {
 
-  override val simulationWideExchanges = Seq(
+  override lazy val simulationWideExchanges = Seq(
     StubExchange( StubRequest(Some("GET"), Some("/"), Nil, Nil, None),
                   StubResponse(200, Nil, None)),
     StubExchangeOnPort (8888)(StubRequest(Some("GET"), Some("/"), Nil, Nil, None),

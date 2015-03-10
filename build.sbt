@@ -3,14 +3,14 @@ import NativePackagerKeys._
 
 name := "gatsby"
 
-version := s"${sys.props.getOrElse("build.majorMinor", "0.1")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
+version := s"${sys.props.getOrElse("build.majorMinor", "0.2")}.${sys.props.getOrElse("build.version", "SNAPSHOT")}"
 
 scalaVersion := "2.10.4"
 
 organization := "com.themillhousegroup"
 
 libraryDependencies ++= Seq(
-    "io.gatling.highcharts" %   "gatling-charts-highcharts"   % "2.0.0",
+    "io.gatling.highcharts" %   "gatling-charts-highcharts"   % "2.0.3",
     "com.dividezero"        %%  "stubby-standalone"           % "1.2",
     "ch.qos.logback"        %   "logback-classic"             % "1.1.2",
     "joda-time"             %   "joda-time"                   % "2.5",

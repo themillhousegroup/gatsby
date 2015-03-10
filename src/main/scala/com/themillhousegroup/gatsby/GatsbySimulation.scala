@@ -26,7 +26,7 @@ class GatsbySimulation(listenPort: Int) extends Simulation
    * Any stub exchanges defined at this level will be added to the back end
    * and will exist for *all* scenarios.
    */
-  val simulationWideExchanges: Seq[StubExchange] = Nil
+  lazy val simulationWideExchanges: Seq[StubExchange] = Nil
 
   val scenarioExchanges = mutable.Map[String, mutable.Buffer[StubExchange]]()
 

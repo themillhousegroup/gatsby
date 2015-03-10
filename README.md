@@ -89,7 +89,22 @@ Things to Note:
 
   - using `com.themillhousegroup.gatsby.GatsbyHttpActionBuilder.withStubby` to automagically create stubby endpoints that return `200 OK`
   - the `stubby` assertions can be used at the conclusion of the simulation, in addition to the standard `check`s during the scenario
-  - in this way, we are checking both the client experience ("they should get a `403`" ) and the server experience ("they should never see the request") in one shot
+  - in this way, we are checking both the client experience ("they should get a `403`" ) and the server experience ("I should never see the request") in one shot
+
+### Running Gatsby
+Identically to Gatling, if you are currently in a directory with a `user-files` subdirectory, you can run:
+
+```% <PATH_TO_GATSBY>/bin/gatsby.sh```
+
+and it will ask you which simulation you'd like to run. Or if you already know the answer, run:
+
+```% <PATH_TO_GATSBY>/bin/gatsby.sh -s package.of.SimulationName```
+
+### Building/Enhancing Gatsby
+If you're working on a new Gatsby feature or debugging, run `sbt stage` in the project root. The next time you run `gatsby.sh`, you'll be running your freshly-built code.
+
+You can streamline this process even further by running `gatsby.sh` with the `-f` option, which performs the `sbt stage` on your behalf.
+
 
 #### Credits
 
