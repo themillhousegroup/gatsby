@@ -30,7 +30,11 @@ class GatsbySelector(val stubbyServer: StubbyServer) extends Logging {
 
   def requestsSeenFor(url: String) = Metric(readerToRequests(_.path.equals(Some(url))), s"Requests Seen for $url")
 
+  def requestsMatching(filterFn: StubRequest => Boolean) = Metric(readerToRequests(filterFn), s"Requests matching '$filterFn'")
+
   def exchangesSeen = Metric(readerToExchanges(_ => true), "Exchanges Seen")
 
   def exchangesSeenFor(url: String) = Metric(readerToExchanges(_.request.path.equals(Some(url))), s"Exchanges Seen for $url")
+
+  def exchangesMatching(filterFn: StubExchange => Boolean) = Metric(readerToExchanges(filterFn), s"Exchanges matching '$filterFn'")
 }
