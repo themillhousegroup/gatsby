@@ -5,6 +5,9 @@ __Gat__[ling] at the front, __s__[tub]__by__ round the back.
 
 Put your network tool/middleware/whatever in the middle and verify it does what it should.
 
+[![Build Status](https://travis-ci.org/themillhousegroup/gatsby.svg?branch=master)](https://travis-ci.org/themillhousegroup/gatsby)
+
+
 ### Concept
 ASCII art FTW:
 
